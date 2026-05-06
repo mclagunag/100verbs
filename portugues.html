@@ -54,9 +54,9 @@
         <input type="text" id="ex-in" autocomplete="off" placeholder="Escreva aqui...">
         <div id="ex-f" class="feed"></div>
         <button onclick="check()" style="margin-top:10px;width:100%;background:var(--d);color:white;">Verificar</button>
-    </div>
     <div class="foot">
         <button onclick="prev()">Anterior</button>
+        <button onclick="shuffle()" style="background: var(--d); color: white;">Aleatório 🔀</button>
         <button onclick="next()">Próximo</button>
     </div>
 </div>
@@ -144,6 +144,12 @@ function next(){
 }
 function prev(){
     idx--; if(idx<0)idx=verbs.length-1; pIdx=0; up();
+}
+function shuffle(){
+    verbs.sort(() => Math.random() - 0.5);
+    idx = 0;
+    pIdx = 0;
+    up();
 }
 up();
 </script>
