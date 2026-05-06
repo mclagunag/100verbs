@@ -57,6 +57,7 @@
     </div>
     <div class="foot">
         <button onclick="prev()">Anterior</button>
+        <button onclick="shuffle()" style="background: var(--d); color: white;">Aleatorio 🔀</button>
         <button onclick="next()">Siguiente</button>
     </div>
 </div>
@@ -143,6 +144,12 @@ function next(){
 }
 function prev(){
     idx--; if(idx<0)idx=verbs.length-1; pIdx=0; up();
+}
+function shuffle(){
+    verbs.sort(() => Math.random() - 0.5);
+    idx = 0;
+    pIdx = Math.floor(Math.random() * pron.length);
+    up();
 }
 up();
 </script>
