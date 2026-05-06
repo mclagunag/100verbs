@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maîtrise des Verbes | Français</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root{--a:#A66F5D;--d:#34231D;--b:#FCFAF2;--w:#FFF}
+        body{font-family:'Inter',sans-serif;background:var(--b);color:var(--d);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:40px 20px}
+        .container{max-width:600px;width:100%;text-align:center}
+        h1{font-weight:300;margin-bottom:40px}
+        .nav{display:flex;justify-content:center;gap:10px;margin-bottom:30px;flex-wrap:wrap;}
+        button,select{font-family:'Inter';padding:12px 20px;border-radius:8px;border:1px solid var(--a);background:transparent;color:var(--d);cursor:pointer;font-size:14px;transition:.3s}
+        button:hover,.act{background:var(--a);color:var(--b)}
+        .card-box{perspective:1000px;height:380px;margin-bottom:30px;cursor:pointer}
+        .card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .6s}
+        .card.flip{transform:rotateY(180deg)}
+        .front,.back{position:absolute;width:100%;height:100%;backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;background:var(--w);border-radius:20px;padding:30px;box-sizing:border-box;box-shadow:0 10px 30px rgba(52,35,29,.05)}
+        .back{transform:rotateY(180deg);align-items:flex-start}
+        .v-main{font-size:42px;font-weight:600;margin:0}
+        .trans{color:var(--a);font-size:14px;margin-top:15px}
+        .c-item{margin:8px 0;font-size:18px;width:100%;border-bottom:1px solid #eee;padding-bottom:4px;text-align:left;}
+        .ex-area{background:var(--w);padding:40px;border-radius:20px;display:none;box-shadow:0 10px 30px rgba(52,35,29,.05)}
+        input{width:90%;padding:15px;border:none;border-bottom:2px solid var(--a);font-size:20px;text-align:center;outline:none;margin:20px 0;font-family:'Inter'}
+        .feed{font-weight:600;margin-top:15px;height:20px}
+        .foot{display:flex;justify-content:space-between;margin-top:20px}
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Pratique des Verbes</h1>
+    <div class="nav">
+        <select id="tSelect" onchange="chTense()">
+            <option value="pr">Présent</option>
+            <option value="pa">Passé Composé</option>
+            <option value="fu">Futur Simple</option>
+        </select>
+        <button id="bFlash" class="act" onclick="setMode('flash')">Flashcards</button>
+        <button id="bEx" onclick="setMode('ex')">Exercices</button>
+    </div>
+    <div id="vFlash">
+        <div class="card-box" onclick="this.querySelector('.card').classList.toggle('flip')">
+            <div class="card">
+                <div class="front">
+                    <p class="v-main" id="fc-v">Verbo</p>
+                    <div class="trans" id="fc-t">Traducción</div>
+                </div>
+                <div class="back" id="fc-c"></div>
+            </div>
+        </div>
+    </div>
+    <div id="vEx" class="ex-area">
+        <p id="ex-p" style="font-size: 18px;"></p>
+        <input type="text" id="ex-in" autocomplete="off" placeholder="Écrivez ici...">
+        <div id="ex-f" class="feed"></div>
+        <button onclick="check()" style="margin-top:10px;width:100%;background:var(--d);color:white;">Vérifier</button>
+    </div>
+    <div class="foot">
+        <button onclick="prev()">Précédent</button>
+        <button onclick="next()">Suivant</button>
+    </div>
+</div>
+<script>
+const verbs = [
+    { i:"Être", t:"ES: Ser/Estar | EN: To be | PT: Ser/Estar", pr:["suis","es","est","sommes","êtes","sont"], pa:["ai été","as été","a été","avons été","avez été","ont été"], fu:["serai","seras","sera","serons","serez","seront"] },
+    { i:"Avoir", t:"ES: Tener | EN: To have | PT: Ter", pr:["ai","as","a","avons","avez","ont"], pa:["ai eu","as eu","a eu","avons eu","avez eu","ont eu"], fu:["aurai","auras","aura","aurons","aurez","auront"] },
+    { i:"Aller", t:"ES: Ir | EN: To go | PT: Ir", pr:["vais","vas","va","allons","allez","vont"], pa:["suis allé(e)","es allé(e)","est allé(e)","sommes allé(e)s","êtes allé(e)s","sont allé(e)s"], fu:["irai","iras","ira","irons","irez","iront"] },
+    { i:"Faire", t:"ES: Hacer | EN: To do/make | PT: Fazer", pr:["fais","fais","fait","faisons","faites","font"], pa:["ai fait","as fait","a fait","avons fait","avez fait","ont fait"], fu:["ferai","feras","fera","ferons","ferez","feront"] },
+    { i:"Pouvoir", t:"ES: Poder | EN: To be able | PT: Poder", pr:["peux","peux","peut","pouvons","pouvez","peuvent"], pa:["ai pu","as pu","a pu","avons pu","avez pu","ont pu"], fu:["pourrai","pourras","pourra","pourrons","pourrez","pourront"] },
+    { i:"Dire", t:"ES: Decir | EN: To say | PT: Dizer", pr:["dis","dis","dit","disons","dites","disent"], pa:["ai dit","as dit","a dit","avons dit","avez dit","ont dit"], fu:["dirai","diras","dira","dirons","direz","diront"] },
+    { i:"Vouloir", t:"ES: Querer | EN: To want | PT: Querer", pr:["veux","veux","veut","voulons","voulez","veulent"], pa:["ai voulu","as voulu","a voulu","avons voulu","avez voulu","ont voulu"], fu:["voudrai","voudras","voudra","voudrons","voudrez","voudront"] },
+    { i:"Voir", t:"ES: Ver | EN: To see | PT: Ver", pr:["vois","vois","voit","voyons","voyez","voient"], pa:["ai vu","as vu","a vu","avons vu","avez vu","ont vu"], fu:["verrai","verras","verra","verrons","verrez","verront"] },
+    { i:"Savoir", t:"ES: Saber | EN: To know | PT: Saber", pr:["sais","sais","sait","savons","savez","savent"], pa:["ai su","as su","a su","avons su","avez su","ont su"], fu:["saurai","sauras","saura","saurons","saurez","sauront"] },
+    { i:"Donner", t:"ES: Dar | EN: To give | PT: Dar", pr:["donne","donnes","donne","donnons","donnez","donnent"], pa:["ai donné","as donné","a donné","avons donné","avez donné","ont donné"], fu:["donnerai","donneras","donnera","donnerons","donnerez","donneront"] },
+    { i:"Venir", t:"ES: Venir | EN: To come | PT: Vir", pr:["viens","viens","vient","venons","venez","viennent"], pa:["suis venu(e)","es venu(e)","est venu(e)","sommes venu(e)s","êtes venu(e)s","sont venu(e)s"], fu:["viendrai","viendras","viendra","viendrons","viendrez","viendront"] },
+    { i:"Parler", t:"ES: Hablar | EN: To speak | PT: Falar", pr:["parle","parles","parle","parlons","parlez","parlent"], pa:["ai parlé","as parlé","a parlé","avons parlé","avez parlé","ont parlé"], fu:["parlerai","parleras","parlera","parlerons","parlerez","parleront"] },
+    { i:"Manger", t:"ES: Comer | EN: To eat | PT: Comer", pr:["mange","manges","mange","mangeons","mangez","mangent"], pa:["ai mangé","as mangé","a mangé","avons mangé","avez mangé","ont mangé"], fu:["mangerai","mangeras","mangera","mangerons","mangerez","mangeront"] },
+    { i:"Boire", t:"ES: Beber | EN: To drink | PT: Beber", pr:["bois","bois","boit","buvons","buvez","boivent"], pa:["ai bu","as bu","a bu","avons bu","avez bu","ont bu"], fu:["boirai","boiras","boira","boirons","boirez","boiront"] },
+    { i:"Partir", t:"ES: Partir/Salir | EN: To leave | PT: Partir", pr:["pars","pars","part","partons","partez","partent"], pa:["suis parti(e)","es parti(e)","est parti(e)","sommes parti(e)s","êtes parti(e)s","sont parti(e)s"], fu:["partirai","partiras","partira","partirons","partirez","partiront"] }
+];
+const pron = ["Je/J'", "Tu", "Il/Elle", "Nous", "Vous", "Ils/Elles"];
+let idx=0, tn="pr", md="flash", pIdx=0;
+
+function up(){
+    const v=verbs[idx];
+    document.getElementById('fc-v').innerText=v.i; document.getElementById('fc-t').innerText=v.t;
+    let h=""; v[tn].forEach((c,i)=>h+=`<div class="c-item"><b>${pron[i]}</b> ${c}</div>`);
+    document.getElementById('fc-c').innerHTML=h;
+    if(md==='ex'){
+        document.getElementById('ex-p').innerText=`${pron[pIdx]} (${v.i})`;
+        document.getElementById('ex-f').innerText=""; document.getElementById('ex-in').value="";
+    }
+}
+function setMode(m){
+    md=m; document.getElementById('vFlash').style.display=m==='flash'?'block':'none';
+    document.getElementById('vEx').style.display=m==='ex'?'block':'none';
+    document.getElementById('bFlash').className=m==='flash'?'act':''; document.getElementById('bEx').className=m==='ex'?'act':'';
+    up();
+}
+function chTense(){ tn=document.getElementById('tSelect').value; up(); }
+function check(){
+    const u=document.getElementById('ex-in').value.toLowerCase().trim();
+    const c=verbs[idx][tn][pIdx]; const f=document.getElementById('ex-f');
+    if(u===c){ f.innerText="Correct !"; f.style.color="green"; setTimeout(next,1000); }
+    else{ f.innerText=`Incorrect. Réponse: ${c}`; f.style.color="red"; }
+}
+function next(){
+    if(md==='ex'){ pIdx++; if(pIdx>=6){pIdx=0;idx++;} }else{ idx++; }
+    if(idx>=verbs.length)idx=0; up();
+}
+function prev(){
+    idx--; if(idx<0)idx=verbs.length-1; pIdx=0; up();
+}
+up();
+</script>
+</body>
+</html>
