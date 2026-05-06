@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica de Verbos | @enlagunada</title>
+    <style>
+        :root {
+            --bg-color: #f7f7f7;
+            --text-color: #333333;
+            --card-bg: #ffffff;
+            --primary: #d1d1d1;
+            --primary-hover: #b8b8b8;
+            --success: #d4edda;
+            --error: #f8d7da;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        select, button {
+            font-family: Arial, sans-serif;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: var(--card-bg);
+        }
+
+        button {
+            background-color: var(--primary);
+            border: none;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Flashcard Styles */
+        .flashcard-container {
+            perspective: 1000px;
+            width: 300px;
+            height: 200px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .flashcard.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            overflow-y: auto;
+        }
+
+        .verb-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+        .verb-translation { font-size: 16px; color: #666; font-style: italic; }
+        .conjugation-list { list-style: none; padding: 0; margin: 0; font-size: 16px; text-align: left;}
+        .conjugation-list li { margin-bottom: 5px; }
+
+        /* Exercise Styles */
+        .exercise-container {
+            width: 100%;
+            max-width: 400px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            display: none;
+            box-sizing: border-box;
+        }
+
+        .prompt { font-size: 20px; margin-bottom: 20px; }
+        .input-area input {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 300px;
+            margin-top: 20px;
+        }
+
+        .active-view { display: flex; flex-direction: column; align-items: center;}
+        .active-view-block { display: block; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Práctica de Idiomas | @enlagunada</h1>
+        <p>Aprende y practica tus verbos</p>
+    </header>
+
+    <div class="controls">
+        <select id="language-select" onchange="resetApp()">
+            <option value="es">Español (Para nativos EN/PT)</option>
+            <option value="fr">Français (Para nativos ES/PT)</option>
+        </select>
+        <select id="mode-select" onchange="resetApp()">
+            <option value="flashcards">Tarjetas (Flashcards)</option>
+            <option value="exercise">Ejercicios</option>
+        </select>
+        <select id="tense-select" onchange="resetApp()">
+            <option value="present">Presente</option>
+            <option value="past">Pasado</option>
+            <option value="future">Futuro</option>
+        </select>
+    </div>
+
+    <!-- Flashcard View -->
+    <div id="flashcard-view" class="flashcard-container active-view">
+        <div class="flashcard" onclick="flipCard()">
+            <div class="card-face card-front">
+                <div class="verb-title" id="fc-infinitive">Verbo</div>
+                <div class="verb-translation" id="fc-translation">Traducción</div>
+                <div style="margin-top: 20px; font-size: 12px; color: #999;">Haz clic para voltear</div>
+            </div>
+            <div class="card-face card-back">
+                <ul class="conjugation-list" id="fc-conjugations">
+                    <!-- Conjugations will load here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exercise View -->
+    <div id="exercise-view" class="exercise-container">
+        <div class="prompt" id="ex-prompt">Pronombre + Verbo</div>
+        <div class="input-area">
+            <input type="text" id="ex-input" placeholder="Escribe la conjugación aquí..." onkeypress="handleEnter(event)">
+            <br>
+            <button onclick="checkAnswer()">Comprobar</button>
+        </div>
+        <div class="feedback" id="ex-feedback"></div>
+    </div>
+
+    <div class="nav-buttons">
+        <button onclick="prevVerb()">&#8592; Anterior</button>
+        <button onclick="nextVerb()">Siguiente &#8594;</button>
+    </div>
+
+    <script>
+        /* 
+        =============================================================================
+        BASE DE DATOS DE VERBOS
+        Aquí es donde agregarás el resto de tus 100 verbos. Sigue la misma estructura.
+        Español: no incluyas "vosotros". (yo, tú, él/ella/ud, nosotros, ellos/ellas/uds)
+        Francés: je, tu, il/elle/on, nous, vous, ils/elles.
+        =============================================================================
+        */
+        const data = {
+            es: {
+                pronouns: ['Yo', 'Tú', 'Él/Ella/Usted', 'Nosotros', 'Ellos/Ellas/Ustedes'],
+                verbs: [
+                    {
+                        infinitive: 'Ser',
+                        translation: 'To be / Ser',
+                        present: ['soy', 'eres', 'es', 'somos', 'son'],
+                        past: ['fui', 'fuiste', 'fue', 'fuimos', 'fueron'], // Pretérito
+                        future: ['seré', 'serás', 'será', 'seremos', 'serán']
+                    },
+                    {
+                        infinitive: 'Estar',
+                        translation: 'To be / Estar',
+                        present: ['estoy', 'estás', 'está', 'estamos', 'están'],
+                        past: ['estuve', 'estuviste', 'estuvo', 'estuvimos', 'estuvieron'],
+                        future: ['estaré', 'estarás', 'estará', 'estaremos', 'estarán']
+                    },
+                    {
+                        infinitive: 'Tener',
+                        translation: 'To have / Ter',
+                        present: ['tengo', 'tienes', 'tiene', 'tenemos', 'tienen'],
+                        past: ['tuve', 'tuviste', 'tuvo', 'tuvimos', 'tuvieron'],
+                        future: ['tendré', 'tendrás', 'tendrá', 'tendremos', 'tendrán']
+                    },
+                    {
+                        infinitive: 'Ir',
+                        translation: 'To go / Ir',
+                        present: ['voy', 'vas', 'va', 'vamos', 'van'],
+                        past: ['fui', 'fuiste', 'fue', 'fuimos', 'fueron'],
+                        future: ['iré', 'irás', 'irá', 'iremos', 'irán']
+                    },
+                    {
+                        infinitive: 'Hacer',
+                        translation: 'To do, make / Fazer',
+                        present: ['hago', 'haces', 'hace', 'hacemos', 'hacen'],
+                        past: ['hice', 'hiciste', 'hizo', 'hicimos', 'hicieron'],
+                        future: ['haré', 'harás', 'hará', 'haremos', 'harán']
+                    }
+                    // AGREGA LOS SIGUIENTES VERBOS EN ESPAÑOL AQUÍ
+                ]
+            },
+            fr: {
+                pronouns: ['Je', 'Tu', 'Il/Elle/On', 'Nous', 'Vous', 'Ils/Elles'],
+                verbs: [
+                    {
+                        infinitive: 'Être',
+                        translation: 'Ser, Estar / Ser, Estar',
+                        present: ['suis', 'es', 'est', 'sommes', 'êtes', 'sont'],
+                        past: ['ai été', 'as été', 'a été', 'avons été', 'avez été', 'ont été'], // Passé Composé
+                        future: ['serai', 'seras', 'sera', 'serons', 'serez', 'seront']
+                    },
+                    {
+                        infinitive: 'Avoir',
+                        translation: 'Tener, Haber / Ter, Haver',
+                        present: ['ai', 'as', 'a', 'avons', 'avez', 'ont'],
+                        past: ['ai eu', 'as eu', 'a eu', 'avons eu', 'avez eu', 'ont eu'],
+                        future: ['aurai', 'auras', 'aura', 'aurons', 'aurez', 'auront']
+                    },
+                    {
+                        infinitive: 'Aller',
+                        translation: 'Ir / Ir',
+                        present: ['vais', 'vas', 'va', 'allons', 'allez', 'vont'],
+                        past: ['suis allé(e)', 'es allé(e)', 'est allé(e)', 'sommes allé(e)s', 'êtes allé(e)s', 'sont allé(e)s'],
+                        future: ['irai', 'iras', 'ira', 'irons', 'irez', 'iront']
+                    },
+                    {
+                        infinitive: 'Faire',
+                        translation: 'Hacer / Fazer',
+                        present: ['fais', 'fais', 'fait', 'faisons', 'faites', 'font'],
+                        past: ['ai fait', 'as fait', 'a fait', 'avons fait', 'avez fait', 'ont fait'],
+                        future: ['ferai', 'feras', 'fera', 'ferons', 'ferez', 'feront']
+                    },
+                    {
+                        infinitive: 'Parler',
+                        translation: 'Hablar / Falar',
+                        present: ['parle', 'parles', 'parle', 'parlons', 'parlez', 'parlent'],
+                        past: ['ai parlé', 'as parlé', 'a parlé', 'avons parlé', 'avez parlé', 'ont parlé'],
+                        future: ['parlerai', 'parleras', 'parlera', 'parlerons', 'parlerez', 'parleront']
+                    }
+                    // AGREGA LOS SIGUIENTES VERBOS EN FRANCÉS AQUÍ
+                ]
+            }
+        };
+
+        let currentIndex = 0;
+        let currentPronounIndex = 0; // Para los ejercicios
+
+        function resetApp() {
+            currentIndex = 0;
+            currentPronounIndex = 0;
+            updateView();
+        }
+
+        function updateView() {
+            const mode = document.getElementById('mode-select').value;
+            const flashcardView = document.getElementById('flashcard-view');
+            const exerciseView = document.getElementById('exercise-view');
+
+            // Reset flashcard flip
+            document.querySelector('.flashcard').classList.remove('is-flipped');
+            
+            // Hide feedback
+            document.getElementById('ex-feedback').style.display = 'none';
+            document.getElementById('ex-input').value = '';
+
+            if (mode === 'flashcards') {
+                flashcardView.classList.add('active-view');
+                exerciseView.classList.remove('active-view-block');
+                exerciseView.style.display = 'none';
+                flashcardView.style.display = 'block';
+                loadFlashcard();
+            } else {
+                flashcardView.classList.remove('active-view');
+                flashcardView.style.display = 'none';
+                exerciseView.style.display = 'block';
+                exerciseView.classList.add('active-view-block');
+                loadExercise();
+            }
+        }
+
+        function loadFlashcard() {
+            const lang = document.getElementById('language-select').value;
+            const tense = document.getElementById('tense-select').value;
+            const verbData = data[lang].verbs[currentIndex];
+            const pronouns = data[lang].pronouns;
+
+            document.getElementById('fc-infinitive').textContent = verbData.infinitive;
+            document.getElementById('fc-translation').textContent = verbData.translation;
+
+            const conjugationsUL = document.getElementById('fc-conjugations');
+            conjugationsUL.innerHTML = '';
+            
+            pronouns.forEach((pronoun, index) => {
+                const li = document.createElement('li');
+                // Para francés, manejar "Je" vs "J'" en el display si el verbo empieza con vocal (simplificado aquí)
+                li.innerHTML = `<strong>${pronoun}:</strong> ${verbData[tense][index]}`;
+                conjugationsUL.appendChild(li);
+            });
+        }
+
+        function loadExercise() {
+            const lang = document.getElementById('language-select').value;
+            const verbData = data[lang].verbs[currentIndex];
+            const pronouns = data[lang].pronouns;
+
+            document.getElementById('ex-prompt').textContent = `${pronouns[currentPronounIndex]} + ${verbData.infinitive}`;
+            document.getElementById('ex-input').focus();
+        }
+
+        function flipCard() {
+            document.querySelector('.flashcard').classList.toggle('is-flipped');
+        }
+
+        function nextVerb() {
+            const lang = document.getElementById('language-select').value;
+            const mode = document.getElementById('mode-select').value;
+
+            if (mode === 'exercise') {
+                currentPronounIndex++;
+                if (currentPronounIndex >= data[lang].pronouns.length) {
+                    currentPronounIndex = 0;
+                    currentIndex++;
+                }
+            } else {
+                currentIndex++;
+            }
+
+            if (currentIndex >= data[lang].verbs.length) {
+                currentIndex = 0; // Volver al inicio
+            }
+            updateView();
+        }
+
+        function prevVerb() {
+            const lang = document.getElementById('language-select').value;
+            const mode = document.getElementById('mode-select').value;
+
+            if (mode === 'exercise') {
+                currentPronounIndex--;
+                if (currentPronounIndex < 0) {
+                    currentPronounIndex = data[lang].pronouns.length - 1;
+                    currentIndex--;
+                }
+            } else {
+                currentIndex--;
+            }
+
+            if (currentIndex < 0) {
+                currentIndex = data[lang].verbs.length - 1;
+            }
+            updateView();
+        }
+
+        function checkAnswer() {
+            const lang = document.getElementById('language-select').value;
+            const tense = document.getElementById('tense-select').value;
+            const verbData = data[lang].verbs[currentIndex];
+            
+            const correctAnswer = verbData[tense][currentPronounIndex].toLowerCase().trim();
+            const userAnswer = document.getElementById('ex-input').value.toLowerCase().trim();
+            const feedbackBox = document.getElementById('ex-feedback');
+
+            feedbackBox.style.display = 'block';
+
+            if (userAnswer === correctAnswer) {
+                feedbackBox.textContent = '¡Correcto! / Très bien!';
+                feedbackBox.style.backgroundColor = 'var(--success)';
+                feedbackBox.style.color = '#155724';
+                setTimeout(() => {
+                    nextVerb();
+                }, 1000);
+            } else {
+                feedbackBox.textContent = `Incorrecto. La respuesta es: ${correctAnswer}`;
+                feedbackBox.style.backgroundColor = 'var(--error)';
+                feedbackBox.style.color = '#721c24';
+            }
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        }
+
+        // Initialize the app
+        window.onload = resetApp;
+    </script>
+</body>
+</html>
