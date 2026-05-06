@@ -56,8 +56,9 @@
         <button onclick="check()" style="margin-top:10px;width:100%;background:var(--d);color:white;">Vérifier</button>
     </div>
     <div class="foot">
-        <button onclick="prev()">Précédent</button>
-        <button onclick="next()">Suivant</button>
+        <button onclick="prev()">Anterior</button>
+        <button onclick="shuffle()" style="background: var(--d); color: white;">Aléatóir 🔀</button>
+        <button onclick="next()">Próximo</button>
     </div>
 </div>
 <script>
@@ -144,6 +145,12 @@ function next(){
 }
 function prev(){
     idx--; if(idx<0)idx=verbs.length-1; pIdx=0; up();
+}
+function shuffle(){
+    verbs.sort(() => Math.random() - 0.5);
+    idx = 0;
+    pIdx = Math.floor(Math.random() * pron.length);
+    up();
 }
 up();
 </script>
