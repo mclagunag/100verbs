@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica de Verbos | Español</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root{--a:#A66F5D;--d:#34231D;--b:#FCFAF2;--w:#FFF}
+        body{font-family:'Inter',sans-serif;background:var(--b);color:var(--d);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:40px 20px}
+        .container{max-width:600px;width:100%;text-align:center}
+        h1{font-weight:300;margin-bottom:40px}
+        .nav{display:flex;justify-content:center;gap:10px;margin-bottom:30px;flex-wrap:wrap;}
+        button,select{font-family:'Inter';padding:12px 20px;border-radius:8px;border:1px solid var(--a);background:transparent;color:var(--d);cursor:pointer;font-size:14px;transition:.3s}
+        button:hover,.act{background:var(--a);color:var(--b)}
+        .card-box{perspective:1000px;height:350px;margin-bottom:30px;cursor:pointer}
+        .card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .6s}
+        .card.flip{transform:rotateY(180deg)}
+        .front,.back{position:absolute;width:100%;height:100%;backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;background:var(--w);border-radius:20px;padding:30px;box-sizing:border-box;box-shadow:0 10px 30px rgba(52,35,29,.05)}
+        .back{transform:rotateY(180deg);align-items:flex-start}
+        .v-main{font-size:42px;font-weight:600;margin:0}
+        .trans{color:var(--a);font-size:14px;margin-top:15px}
+        .c-item{margin:8px 0;font-size:18px;width:100%;border-bottom:1px solid #eee;padding-bottom:4px;text-align:left;}
+        .ex-area{background:var(--w);padding:40px;border-radius:20px;display:none;box-shadow:0 10px 30px rgba(52,35,29,.05)}
+        input{width:90%;padding:15px;border:none;border-bottom:2px solid var(--a);font-size:20px;text-align:center;outline:none;margin:20px 0;font-family:'Inter'}
+        .feed{font-weight:600;margin-top:15px;height:20px}
+        .foot{display:flex;justify-content:space-between;margin-top:20px}
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Práctica de Verbos</h1>
+    <div class="nav">
+        <select id="tSelect" onchange="chTense()">
+            <option value="pr">Presente</option>
+            <option value="pa">Pasado (Pretérito)</option>
+            <option value="fu">Futuro</option>
+        </select>
+        <button id="bFlash" class="act" onclick="setMode('flash')">Flashcards</button>
+        <button id="bEx" onclick="setMode('ex')">Ejercicios</button>
+    </div>
+    <div id="vFlash">
+        <div class="card-box" onclick="this.querySelector('.card').classList.toggle('flip')">
+            <div class="card">
+                <div class="front">
+                    <p class="v-main" id="fc-v">Verbo</p>
+                    <div class="trans" id="fc-t">Traducción</div>
+                </div>
+                <div class="back" id="fc-c"></div>
+            </div>
+        </div>
+    </div>
+    <div id="vEx" class="ex-area">
+        <p id="ex-p" style="font-size: 18px;"></p>
+        <input type="text" id="ex-in" autocomplete="off" placeholder="Escribe aquí...">
+        <div id="ex-f" class="feed"></div>
+        <button onclick="check()" style="margin-top:10px;width:100%;background:var(--d);color:white;">Comprobar</button>
+    </div>
+    <div class="foot">
+        <button onclick="prev()">Anterior</button>
+        <button onclick="next()">Siguiente</button>
+    </div>
+</div>
+<script>
+const verbs = [
+    { i:"Ser", t:"PT: Ser | EN: To be | FR: Être", pr:["soy","eres","es","somos","son"], pa:["fui","fuiste","fue","fuimos","fueron"], fu:["seré","serás","será","seremos","serán"] },
+    { i:"Estar", t:"PT: Estar | EN: To be | FR: Être", pr:["estoy","estás","está","estamos","están"], pa:["estuve","estuviste","estuvo","estuvimos","estuvieron"], fu:["estaré","estarás","estará","estaremos","estarán"] },
+    { i:"Tener", t:"PT: Ter | EN: To have | FR: Avoir", pr:["tengo","tienes","tiene","tenemos","tienen"], pa:["tuve","tuviste","tuvo","tuvimos","tuvieron"], fu:["tendré","tendrás","tendrá","tendremos","tendrán"] },
+    { i:"Ir", t:"PT: Ir | EN: To go | FR: Aller", pr:["voy","vas","va","vamos","van"], pa:["fui","fuiste","fue","fuimos","fueron"], fu:["iré","irás","irá","iremos","irán"] },
+    { i:"Hacer", t:"PT: Fazer | EN: To do/make | FR: Faire", pr:["hago","haces","hace","hacemos","hacen"], pa:["hice","hiciste","hizo","hicimos","hicieron"], fu:["haré","harás","hará","haremos","harán"] },
+    { i:"Poder", t:"PT: Poder | EN: To be able to | FR: Pouvoir", pr:["puedo","puedes","puede","podemos","pueden"], pa:["pude","pudiste","pudo","pudimos","pudieron"], fu:["podré","podrás","podrá","podremos","podrán"] },
+    { i:"Decir", t:"PT: Dizer | EN: To say | FR: Dire", pr:["digo","dices","dice","decimos","dicen"], pa:["dije","dijiste","dijo","dijimos","dijeron"], fu:["diré","dirás","dirá","diremos","dirán"] },
+    { i:"Querer", t:"PT: Querer | EN: To want | FR: Vouloir", pr:["quiero","quieres","quiere","queremos","quieren"], pa:["quise","quisiste","quiso","quisimos","quisieron"], fu:["querré","querrás","querrá","querremos","querrán"] },
+    { i:"Ver", t:"PT: Ver | EN: To see | FR: Voir", pr:["veo","ves","ve","vemos","ven"], pa:["vi","viste","vio","vimos","vieron"], fu:["veré","verás","verá","veremos","verán"] },
+    { i:"Saber", t:"PT: Saber | EN: To know | FR: Savoir", pr:["sé","sabes","sabe","sabemos","saben"], pa:["supe","supiste","supo","supimos","supieron"], fu:["sabré","sabrás","sabrá","sabremos","sabrán"] },
+    { i:"Dar", t:"PT: Dar | EN: To give | FR: Donner", pr:["doy","das","da","damos","dan"], pa:["di","diste","dio","dimos","dieron"], fu:["daré","darás","dará","daremos","darán"] },
+    { i:"Venir", t:"PT: Vir | EN: To come | FR: Venir", pr:["vengo","vienes","viene","venimos","vienen"], pa:["vine","viniste","vino","vinimos","vinieron"], fu:["vendré","vendrás","vendrá","vendremos","vendrán"] },
+    { i:"Hablar", t:"PT: Falar | EN: To speak | FR: Parler", pr:["hablo","hablas","habla","hablamos","hablan"], pa:["hablé","hablaste","habló","hablamos","hablaron"], fu:["hablaré","hablarás","hablará","hablaremos","hablarán"] },
+    { i:"Comer", t:"PT: Comer | EN: To eat | FR: Manger", pr:["como","comes","come","comemos","comen"], pa:["comí","comiste","comió","comimos","comieron"], fu:["comeré","comerás","comerá","comeremos","comerán"] },
+    { i:"Vivir", t:"PT: Viver | EN: To live | FR: Vivre", pr:["vivo","vives","vive","vivimos","viven"], pa:["viví","viviste","vivió","vivimos","vivieron"], fu:["viviré","vivirás","vivirá","viviremos","vivirán"] }
+];
+const pron = ["Yo", "Tú", "Él/Ella/Ud.", "Nosotros", "Ellos/Ellas/Uds."];
+let idx=0, tn="pr", md="flash", pIdx=0;
+
+function up(){
+    const v=verbs[idx];
+    document.getElementById('fc-v').innerText=v.i; document.getElementById('fc-t').innerText=v.t;
+    let h=""; v[tn].forEach((c,i)=>h+=`<div class="c-item"><b>${pron[i]}</b> ${c}</div>`);
+    document.getElementById('fc-c').innerHTML=h;
+    if(md==='ex'){
+        document.getElementById('ex-p').innerText=`${pron[pIdx]} (${v.i})`;
+        document.getElementById('ex-f').innerText=""; document.getElementById('ex-in').value="";
+    }
+}
+function setMode(m){
+    md=m; document.getElementById('vFlash').style.display=m==='flash'?'block':'none';
+    document.getElementById('vEx').style.display=m==='ex'?'block':'none';
+    document.getElementById('bFlash').className=m==='flash'?'act':''; document.getElementById('bEx').className=m==='ex'?'act':'';
+    up();
+}
+function chTense(){ tn=document.getElementById('tSelect').value; up(); }
+function check(){
+    const u=document.getElementById('ex-in').value.toLowerCase().trim();
+    const c=verbs[idx][tn][pIdx]; const f=document.getElementById('ex-f');
+    if(u===c){ f.innerText="¡Correcto!"; f.style.color="green"; setTimeout(next,1000); }
+    else{ f.innerText=`Incorrecto. Respuesta: ${c}`; f.style.color="red"; }
+}
+function next(){
+    if(md==='ex'){ pIdx++; if(pIdx>=5){pIdx=0;idx++;} }else{ idx++; }
+    if(idx>=verbs.length)idx=0; up();
+}
+function prev(){
+    idx--; if(idx<0)idx=verbs.length-1; pIdx=0; up();
+}
+up();
+</script>
+</body>
+</html>
