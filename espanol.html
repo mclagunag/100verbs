@@ -77,8 +77,10 @@ const verbs = [
     { i:"Venir", t:"PT: Vir | EN: To come | FR: Venir", pr:["vengo","vienes","viene","venimos","vienen"], pa:["vine","viniste","vino","vinimos","vinieron"], fu:["vendré","vendrás","vendrá","vendremos","vendrán"] },
     { i:"Hablar", t:"PT: Falar | EN: To speak | FR: Parler", pr:["hablo","hablas","habla","hablamos","hablan"], pa:["hablé","hablaste","habló","hablamos","hablaron"], fu:["hablaré","hablarás","hablará","hablaremos","hablarán"] },
     { i:"Comer", t:"PT: Comer | EN: To eat | FR: Manger", pr:["como","comes","come","comemos","comen"], pa:["comí","comiste","comió","comimos","comieron"], fu:["comeré","comerás","comerá","comeremos","comerán"] },
-    { i:"Vivir", t:"PT: Viver | EN: To live | FR: Vivre", pr:["vivo","vives","vive","vivimos","viven"], pa:["viví","viviste","vivió","vivimos","vivieron"], fu:["viviré","vivirás","vivirá","viviremos","vivirán"] },{ i:"Pensar", t:"PT: Pensar | EN: To think | FR: Penser", pr:["pienso","piensas","piensa","pensamos","piensan"], pa:["pensé","pensaste","pensó","pensamos","pensaron"], fu:["pensaré","pensarás","pensará","pensaremos","pensarán"] },      { i:"Conocer", t:"PT: Conhecer | EN: To know | FR: Connaître", pr:["encuentro","encuentras","encuentra","encontramos","encuentran"], pa:["encontré","encontraste","encontró","encontramos","encontraron"], fu:["encontraré","encontrarás","encontrará","encontraremos","encontrarán"] },
-    { i:"Salir", t:"PT: SPôr/Colocar | EN: To put | FR: Mettre:["salgo","sales","sale","salimos","salen"], pa:["salí","saliste","salió","salimos","salieron"], fu:["saldré","saldrás","saldrá","saldremos","saldrán"] },
+    { i:"Vivir", t:"PT: Viver | EN: To live | FR: Vivre", pr:["vivo","vives","vive","vivimos","viven"], pa:["viví","viviste","vivió","vivimos","vivieron"], fu:["viviré","vivirás","vivirá","viviremos","vivirán"] },
+    { i:"Pensar", t:"PT: Pensar | EN: To think | FR: Penser", pr:["pienso","piensas","piensa","pensamos","piensan"], pa:["pensé","pensaste","pensó","pensamos","pensaron"], fu:["pensaré","pensarás","pensará","pensaremos","pensarán"] },
+    { i:"Encontrar", t:"PT: Encontrar | EN: To find | FR: Trouver", pr:["encuentro","encuentras","encuentra","encontramos","encuentran"], pa:["encontré","encontraste","encontró","encontramos","encontraron"], fu:["encontraré","encontrarás","encontrará","encontraremos","encontrarán"] },
+    { i:"Salir", t:"PT: Sair | EN: To go out | FR: Sortir", pr:["salgo","sales","sale","salimos","salen"], pa:["salí","saliste","salió","salimos","salieron"], fu:["saldré","saldrás","saldrá","saldremos","saldrán"] },
     { i:"Conocer", t:"PT: Conhecer | EN: To know | FR: Connaître", pr:["conozco","conoces","conoce","conocemos","conocen"], pa:["conocí","conociste","conoció","conocimos","conocieron"], fu:["conoceré","conocerás","conocerá","conoceremos","conocerán"] },
     { i:"Llegar", t:"PT: Chegar | EN: To arrive | FR: Arriver", pr:["llego","llegas","llega","llegamos","llegan"], pa:["llegué","llegaste","llegó","llegamos","llegaron"], fu:["llegaré","llegarás","llegará","llegaremos","llegarán"] },
     { i:"Creer", t:"PT: Crer/Acreditar | EN: To believe | FR: Croire", pr:["creo","crees","cree","creemos","creen"], pa:["creí","creíste","creyó","creímos","creyeron"], fu:["creeré","creerás","creerá","creeremos","creerán"] },
@@ -112,45 +114,82 @@ const verbs = [
     { i:"Aprender", t:"PT: Aprender | EN: To learn | FR: Apprendre", pr:["aprendo","aprendes","aprende","aprendemos","aprenden"], pa:["aprendí","aprendiste","aprendió","aprendimos","aprendieron"], fu:["aprenderé","aprenderás","aprenderá","aprenderemos","aprenderán"] },
     { i:"Comprender", t:"PT: Compreender | EN: To understand | FR: Comprendre", pr:["comprendo","comprendes","comprende","comprendemos","comprenden"], pa:["comprendí","comprendiste","comprendió","comprendimos","comprendieron"], fu:["comprenderé","comprenderás","comprenderá","comprenderemos","comprenderán"] }
 ];
+
 const pron = ["Yo", "Tú", "Él/Ella/Ud.", "Nosotros", "Ellos/Ellas/Uds."];
 let idx=0, tn="pr", md="flash", pIdx=0;
 
 function up(){
     const v=verbs[idx];
-    document.getElementById('fc-v').innerText=v.i; document.getElementById('fc-t').innerText=v.t;
-    let h=""; v[tn].forEach((c,i)=>h+=`<div class="c-item"><b>${pron[i]}</b> ${c}</div>`);
+    document.getElementById('fc-v').innerText=v.i; 
+    document.getElementById('fc-t').innerText=v.t;
+    let h=""; 
+    v[tn].forEach((c,i)=>h+=`<div class="c-item"><b>${pron[i]}</b> ${c}</div>`);
     document.getElementById('fc-c').innerHTML=h;
+    
     if(md==='ex'){
         document.getElementById('ex-p').innerText=`${pron[pIdx]} (${v.i})`;
-        document.getElementById('ex-f').innerText=""; document.getElementById('ex-in').value="";
+        document.getElementById('ex-f').innerText=""; 
+        document.getElementById('ex-in').value="";
     }
 }
+
 function setMode(m){
-    md=m; document.getElementById('vFlash').style.display=m==='flash'?'block':'none';
-    document.getElementById('vEx').style.display=m==='ex'?'block':'none';
-    document.getElementById('bFlash').className=m==='flash'?'act':''; document.getElementById('bEx').className=m==='ex'?'act':'';
+    md=m; 
+    document.getElementById('vFlash').style.display = m==='flash' ? 'block' : 'none';
+    document.getElementById('vEx').style.display = m==='ex' ? 'block' : 'none';
+    document.getElementById('bFlash').className = m==='flash' ? 'act' : ''; 
+    document.getElementById('bEx').className = m==='ex' ? 'act' : '';
     up();
 }
-function chTense(){ tn=document.getElementById('tSelect').value; up(); }
+
+function chTense(){ 
+    tn=document.getElementById('tSelect').value; 
+    up(); 
+}
+
 function check(){
     const u=document.getElementById('ex-in').value.toLowerCase().trim();
-    const c=verbs[idx][tn][pIdx]; const f=document.getElementById('ex-f');
-    if(u===c){ f.innerText="¡Correcto!"; f.style.color="green"; setTimeout(next,1000); }
-    else{ f.innerText=`Incorrecto. Respuesta: ${c}`; f.style.color="red"; }
+    const c=verbs[idx][tn][pIdx]; 
+    const f=document.getElementById('ex-f');
+    if(u===c){ 
+        f.innerText="¡Correcto!"; 
+        f.style.color="green"; 
+        setTimeout(next,1000); 
+    } else { 
+        f.innerText=`Incorrecto. Respuesta: ${c}`; 
+        f.style.color="red"; 
+    }
 }
+
 function next(){
-    if(md==='ex'){ pIdx++; if(pIdx>=5){pIdx=0;idx++;} }else{ idx++; }
-    if(idx>=verbs.length)idx=0; up();
+    if(md==='ex'){ 
+        pIdx++; 
+        if(pIdx >= pron.length){ pIdx=0; idx++; } 
+    } else { 
+        idx++; 
+    }
+    if(idx >= verbs.length) idx=0; 
+    up();
 }
+
 function prev(){
-    idx--; if(idx<0)idx=verbs.length-1; pIdx=0; up();
+    if(md==='ex'){
+        pIdx--;
+        if(pIdx < 0){ pIdx=pron.length-1; idx--; }
+    } else {
+        idx--; 
+    }
+    if(idx < 0) idx=verbs.length-1; 
+    up();
 }
+
 function shuffle(){
     verbs.sort(() => Math.random() - 0.5);
     idx = 0;
     pIdx = Math.floor(Math.random() * pron.length);
     up();
 }
+
 up();
 </script>
 </body>
