@@ -6,29 +6,48 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root{--a:#A66F5D;--d:#34231D;--b:#FCFAF2;--w:#FFF}
-        body{font-family:'Inter',sans-serif;background:var(--b);color:var(--d);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:40px 20px}
+        body.dark-mode{--a:#D29A88;--d:#FCFAF2;--b:#1A110E;--w:#2C1E19}
+        body{font-family:'Inter',sans-serif;background:var(--b);color:var(--d);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px;transition:background 0.3s, color 0.3s}
         .container{max-width:600px;width:100%;text-align:center}
-        h1{font-weight:300;margin-bottom:40px}
+        
+        .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;font-size:20px}
+        .toggle-btn{background:transparent;border:none;color:var(--d);padding:5px;cursor:pointer;font-size:24px;transition:transform 0.3s}
+        .toggle-btn:hover{transform:scale(1.1)}
+
+        h1{font-weight:300;margin-bottom:30px}
         .nav{display:flex;justify-content:center;gap:10px;margin-bottom:30px;flex-wrap:wrap;}
-        button,select{font-family:'Inter';padding:12px 20px;border-radius:8px;border:1px solid var(--a);background:transparent;color:var(--d);cursor:pointer;font-size:14px;transition:.3s}
+        button,select{font-family:'Inter';padding:12px 20px;border-radius:8px;border:1px solid var(--a);background:var(--w);color:var(--d);cursor:pointer;font-size:14px;transition:.3s}
         button:hover,.act{background:var(--a);color:var(--b)}
         .card-box{perspective:1000px;height:350px;margin-bottom:30px;cursor:pointer}
         .card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .6s}
         .card.flip{transform:rotateY(180deg)}
-        .front,.back{position:absolute;width:100%;height:100%;backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;background:var(--w);border-radius:20px;padding:30px;box-sizing:border-box;box-shadow:0 10px 30px rgba(52,35,29,.05)}
+        .front,.back{position:absolute;width:100%;height:100%;backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;background:var(--w);border-radius:20px;padding:30px;box-sizing:border-box;box-shadow:0 10px 30px rgba(0,0,0,.08)}
         .back{transform:rotateY(180deg);align-items:flex-start}
-        .v-main{font-size:42px;font-weight:600;margin:0}
-        .trans{color:var(--a);font-size:14px;margin-top:15px}
-        .c-item{margin:8px 0;font-size:18px;width:100%;border-bottom:1px solid #eee;padding-bottom:4px;text-align:left;}
-        .ex-area{background:var(--w);padding:40px;border-radius:20px;display:none;box-shadow:0 10px 30px rgba(52,35,29,.05)}
-        input{width:90%;padding:15px;border:none;border-bottom:2px solid var(--a);font-size:20px;text-align:center;outline:none;margin:20px 0;font-family:'Inter'}
+        
+        .v-main{font-size:42px;font-weight:600;margin:0;display:flex;align-items:center;gap:15px; justify-content:center; width:100%;}
+        .audio-btn{background:transparent;border:none;font-size:24px;cursor:pointer;padding:0;box-shadow:none}
+        .audio-btn:hover{transform:scale(1.2);background:transparent}
+        
+        .trans{color:var(--a);font-size:14px;margin-top:15px;transition:opacity 0.3s}
+        .hidden-trans{opacity:0;pointer-events:none}
+        
+        .c-item{margin:8px 0;font-size:18px;width:100%;border-bottom:1px solid rgba(166,111,93,0.2);padding-bottom:4px;display:grid;grid-template-columns:140px 40px 1fr;align-items:center;text-align:left;}
+        
+        .ex-area{background:var(--w);padding:40px;border-radius:20px;display:none;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+        input{width:90%;padding:15px;border:none;border-bottom:2px solid var(--a);background:transparent;color:var(--d);font-size:20px;text-align:center;outline:none;margin:20px 0;font-family:'Inter'}
         .feed{font-weight:600;margin-top:15px;height:20px}
         .foot{display:flex;justify-content:space-between;margin-top:20px}
     </style>
 </head>
 <body>
 <div class="container">
+    <div class="top-bar">
+        <button class="toggle-btn" onclick="toggleDark()" id="btnDark" title="Modo Dia/Noite">🌙</button>
+        <button class="toggle-btn" onclick="toggleTrans()" id="btnTrans" title="Ocultar/Mostrar Tradução">🙈</button>
+    </div>
+
     <h1>Prática de Verbos</h1>
+    
     <div class="nav">
         <select id="tSelect" onchange="chTense()">
             <option value="pr">Presente</option>
@@ -38,29 +57,38 @@
         <button id="bFlash" class="act" onclick="setMode('flash')">Flashcards</button>
         <button id="bEx" onclick="setMode('ex')">Exercícios</button>
     </div>
+
     <div id="vFlash">
         <div class="card-box" onclick="this.querySelector('.card').classList.toggle('flip')">
             <div class="card">
                 <div class="front">
-                    <p class="v-main" id="fc-v">Verbo</p>
+                    <div class="v-main">
+                        <span id="fc-v">Verbo</span>
+                        <button class="audio-btn" onclick="playAudio(document.getElementById('fc-v').innerText, event)">🔊</button>
+                    </div>
                     <div class="trans" id="fc-t">Tradução</div>
                 </div>
                 <div class="back" id="fc-c"></div>
             </div>
         </div>
     </div>
+
     <div id="vEx" class="ex-area">
-        <p id="ex-p" style="font-size: 18px;"></p>
+        <div class="v-main" style="font-size:24px;">
+            <span id="ex-p"></span>
+        </div>
         <input type="text" id="ex-in" autocomplete="off" placeholder="Escreva aqui...">
         <div id="ex-f" class="feed"></div>
-        <button onclick="check()" style="margin-top:10px;width:100%;background:var(--d);color:white;">Verificar</button>
+        <button onclick="check()" style="margin-top:10px;width:100%;background:var(--a);color:var(--b);">Verificar (Enter)</button>
     </div>
+
     <div class="foot">
-        <button onclick="prev()">Anterior</button>
-        <button onclick="shuffle()" style="background: var(--d); color: white;">Aleatório 🔀</button>
-        <button onclick="next()">Próximo</button>
+        <button onclick="prev()">⬅ Anterior</button>
+        <button onclick="shuffle()" style="background:var(--d);color:var(--b);">Aleatório 🔀</button>
+        <button onclick="next()">Próximo ➡</button>
     </div>
 </div>
+
 <script>
 const verbs = [
     { i:"Ser", t:"FR: Être | ES: Ser | EN: To be", pr:["sou","é","é","somos","são"], pa:["fui","foi","foi","fomos","foram"], fu:["serei","será","será","seremos","serão"] },
@@ -77,7 +105,8 @@ const verbs = [
     { i:"Vir", t:"FR: Venir | ES: Venir | EN: To come", pr:["venho","vem","vem","vimos","vêm"], pa:["vim","veio","veio","viemos","vieram"], fu:["virei","virá","virá","viremos","virão"] },
     { i:"Falar", t:"FR: Parler | ES: Hablar | EN: To speak", pr:["falo","fala","fala","falamos","falam"], pa:["falei","falou","falou","falamos","falaram"], fu:["falarei","falará","falará","falaremos","falarão"] },
     { i:"Comer", t:"FR: Manger | ES: Comer | EN: To eat", pr:["como","come","come","comemos","comem"], pa:["comi","comeu","comeu","comemos","comeram"], fu:["comerei","comerá","comerá","comeremos","comerão"] },
-    { i:"Gostar", t:"FR: Aimer | ES: Gustar | EN: To like", pr:["gosto","gosta","gosta","gostamos","gostam"], pa:["gostei","gostou","gostou","gostamos","gostaram"], fu:["gostarei","gostará","gostará","gostaremos","gostarão"] },{ i:"Pensar", t:"FR: Penser | ES: Pensar | EN: To think", pr:["penso","pensa","pensa","pensamos","pensam"], pa:["pensei","pensou","pensou","pensamos","pensaram"], fu:["pensarei","pensará","pensará","pensaremos","pensarão"] },
+    { i:"Gostar", t:"FR: Aimer | ES: Gustar | EN: To like", pr:["gosto","gosta","gosta","gostamos","gostam"], pa:["gostei","gostou","gostou","gostamos","gostaram"], fu:["gostarei","gostará","gostará","gostaremos","gostarão"] },
+    { i:"Pensar", t:"FR: Penser | ES: Pensar | EN: To think", pr:["penso","pensa","pensa","pensamos","pensam"], pa:["pensei","pensou","pensou","pensamos","pensaram"], fu:["pensarei","pensará","pensará","pensaremos","pensarão"] },
     { i:"Encontrar", t:"FR: Trouver | ES: Encontrar | EN: To find", pr:["encontro","encontra","encontra","encontramos","encontram"], pa:["encontrei","encontrou","encontrou","encontramos","encontraram"], fu:["encontrarei","encontrará","encontrará","encontraremos","encontrarão"] },
     { i:"Sair", t:"FR: Sortir | ES: Salir | EN: To go out", pr:["saio","sai","sai","saímos","saem"], pa:["saí","saiu","saiu","saímos","saíram"], fu:["sairei","sairá","sairá","sairemos","sairão"] },
     { i:"Conhecer", t:"FR: Connaître | ES: Conocer | EN: To know", pr:["conheço","conhece","conhece","conhecemos","conhecem"], pa:["conheci","conheceu","conheceu","conhecemos","conheceram"], fu:["conhecerei","conhecerá","conhecerá","conheceremos","conhecerão"] },
@@ -113,45 +142,124 @@ const verbs = [
     { i:"Dormir", t:"FR: Dormir | ES: Dormir | EN: To sleep", pr:["durmo","dorme","dorme","dormimos","dormem"], pa:["dormi","dormiu","dormiu","dormimos","dormiram"], fu:["dormirei","dormirá","dormirá","dormiremos","dormirão"] },
     { i:"Cair", t:"FR: Tomber | ES: Caer | EN: To fall", pr:["caio","cai","cai","caímos","caem"], pa:["caí","caiu","caiu","caímos","caíram"], fu:["cairei","cairá","cairá","cairemos","cairão"] }
 ];
+
 const pron = ["Eu", "Você", "Ele/Ela", "Nós", "Eles/Elas"];
 let idx=0, tn="pr", md="flash", pIdx=0;
+let isCorrect = false;
 
 function up(){
     const v=verbs[idx];
-    document.getElementById('fc-v').innerText=v.i; document.getElementById('fc-t').innerText=v.t;
-    let h=""; v[tn].forEach((c,i)=>h+=`<div class="c-item"><b>${pron[i]}</b> ${c}</div>`);
+    document.getElementById('fc-v').innerText=v.i; 
+    document.getElementById('fc-t').innerText=v.t;
+    let h=""; 
+    v[tn].forEach((c,i)=>h+=`<div class="c-item"><b>${pron[i]}</b> <button class="audio-btn" style="font-size:16px" onclick="playAudio('${c}', event)">🔊</button> <span>${c}</span></div>`);
     document.getElementById('fc-c').innerHTML=h;
+    
     if(md==='ex'){
         document.getElementById('ex-p').innerText=`${pron[pIdx]} (${v.i})`;
-        document.getElementById('ex-f').innerText=""; document.getElementById('ex-in').value="";
+        document.getElementById('ex-f').innerText=""; 
+        document.getElementById('ex-in').value="";
+        document.getElementById('ex-in').focus();
+        isCorrect = false;
     }
 }
+
 function setMode(m){
-    md=m; document.getElementById('vFlash').style.display=m==='flash'?'block':'none';
-    document.getElementById('vEx').style.display=m==='ex'?'block':'none';
-    document.getElementById('bFlash').className=m==='flash'?'act':''; document.getElementById('bEx').className=m==='ex'?'act':'';
+    md=m; 
+    document.getElementById('vFlash').style.display = m==='flash' ? 'block' : 'none';
+    document.getElementById('vEx').style.display = m==='ex' ? 'block' : 'none';
+    document.getElementById('bFlash').className = m==='flash' ? 'act' : ''; 
+    document.getElementById('bEx').className = m==='ex' ? 'act' : '';
     up();
 }
+
 function chTense(){ tn=document.getElementById('tSelect').value; up(); }
+
 function check(){
+    if(isCorrect) { next(); return; }
     const u=document.getElementById('ex-in').value.toLowerCase().trim();
-    const c=verbs[idx][tn][pIdx]; const f=document.getElementById('ex-f');
-    if(u===c){ f.innerText="Correto!"; f.style.color="green"; setTimeout(next,1000); }
-    else{ f.innerText=`Incorreto. Resposta: ${c}`; f.style.color="red"; }
+    const c=verbs[idx][tn][pIdx]; 
+    const f=document.getElementById('ex-f');
+    
+    if(u===c){ 
+        f.innerText="Correto!"; f.style.color="green"; isCorrect = true;
+        setTimeout(()=>{ if(isCorrect) next(); }, 1500); 
+    } else { 
+        f.innerText=`Incorreto. Resposta: ${c}`; f.style.color="red"; 
+    }
 }
+
 function next(){
-    if(md==='ex'){ pIdx++; if(pIdx>=5){pIdx=0;idx++;} }else{ idx++; }
-    if(idx>=verbs.length)idx=0; up();
+    isCorrect = false;
+    if(md==='ex'){ pIdx++; if(pIdx >= pron.length){ pIdx=0; idx++; } } 
+    else { idx++; document.querySelector('.card').classList.remove('flip'); }
+    if(idx >= verbs.length) idx=0; 
+    up();
 }
+
 function prev(){
-    idx--; if(idx<0)idx=verbs.length-1; pIdx=0; up();
+    isCorrect = false;
+    if(md==='ex'){ pIdx--; if(pIdx < 0){ pIdx=pron.length-1; idx--; } } 
+    else { idx--; document.querySelector('.card').classList.remove('flip'); }
+    if(idx < 0) idx=verbs.length-1; 
+    up();
 }
+
 function shuffle(){
     verbs.sort(() => Math.random() - 0.5);
     idx = 0;
     pIdx = Math.floor(Math.random() * pron.length);
+    document.querySelector('.card').classList.remove('flip');
     up();
 }
+
+function playAudio(text, event) {
+    if(event) event.stopPropagation();
+    let utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'pt-BR'; // Portugués de Brasil
+    
+    let voices = window.speechSynthesis.getVoices();
+    // Buscamos específicamente la de Brasil, o cualquier portuguesa como respaldo
+    let ptVoice = voices.find(voice => voice.lang.includes('pt-BR') || voice.lang.includes('pt_BR'));
+    
+    if (!ptVoice) {
+        ptVoice = voices.find(voice => voice.lang.includes('pt'));
+    }
+    
+    if (ptVoice) {
+        utterance.voice = ptVoice;
+    }
+    
+    window.speechSynthesis.speak(utterance);
+}
+
+window.speechSynthesis.onvoiceschanged = () => {
+    window.speechSynthesis.getVoices();
+};
+
+function toggleDark() {
+    document.body.classList.toggle('dark-mode');
+    document.getElementById('btnDark').innerText = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+}
+
+function toggleTrans() {
+    const t = document.getElementById('fc-t');
+    t.classList.toggle('hidden-trans');
+    document.getElementById('btnTrans').innerText = t.classList.contains('hidden-trans') ? '👁️' : '🙈';
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT') {
+        if (e.key === 'Enter') check();
+        return; 
+    }
+    if (e.key === 'ArrowRight') next();
+    if (e.key === 'ArrowLeft') prev();
+    if (e.key === ' ') { 
+        e.preventDefault(); 
+        if(md==='flash') document.querySelector('.card').classList.toggle('flip');
+    }
+});
 
 up();
 </script>
