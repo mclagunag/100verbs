@@ -3,112 +3,171 @@
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Práctica de Verbos | Español</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root{--a:#A66F5D;--d:#34231D;--b:#FCFAF2;--w:#FFF}
-        body.dark-mode{--a:#D29A88;--d:#FCFAF2;--b:#1A110E;--w:#2C1E19}
-        body{font-family:'Inter',sans-serif;background:var(--b);color:var(--d);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px;transition:background 0.3s, color 0.3s}
-        .container{max-width:600px;width:100%;text-align:center}
+        :root {
+            --bg: #FCFAF2;       /* Floral White */
+            --text: #34231D;     /* Dark Coffee */
+            --accent1: #A66F5D;  /* Cinnamon Wood */
+            --accent2: #729B79;  /* Muted Teal */
+            --light1: #D6BFFF;   /* Mauve */
+            --light2: #E6E670;   /* Pale Amber */
+            --white: #FFFFFF;
+            --border: rgba(52, 35, 29, 0.1);
+        }
+        body.dark-mode {
+            --bg: #1A1210; 
+            --text: #FCFAF2; 
+            --white: #2C1E19;
+            --border: rgba(252, 250, 242, 0.1);
+        }
+        body {
+            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text);
+            margin: 0; display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; padding: 20px; transition: background 0.3s, color 0.3s;
+        }
+        .container { max-width: 700px; width: 100%; }
         
-        .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;font-size:20px}
-        .toggle-btn{background:transparent;border:none;color:var(--d);padding:5px;cursor:pointer;font-size:24px;transition:transform 0.3s}
-        .toggle-btn:hover{transform:scale(1.1)}
+        /* Top Bar */
+        .top-bar { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .icon-btn { background: transparent; border: none; font-size: 24px; cursor: pointer; transition: transform 0.2s; }
+        .icon-btn:hover { transform: scale(1.1); }
 
-        h1{font-weight:300;margin-bottom:30px}
-        .nav{display:flex;justify-content:center;gap:10px;margin-bottom:30px;flex-wrap:wrap;}
-        button,select{font-family:'Inter';padding:12px 20px;border-radius:8px;border:1px solid var(--a);background:var(--w);color:var(--d);cursor:pointer;font-size:14px;transition:.3s}
-        button:hover,.act{background:var(--a);color:var(--b)}
-        .card-box{perspective:1000px;height:350px;margin-bottom:30px;cursor:pointer}
-        .card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .6s}
-        .card.flip{transform:rotateY(180deg)}
-        .front,.back{position:absolute;width:100%;height:100%;backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;background:var(--w);border-radius:20px;padding:30px;box-sizing:border-box;box-shadow:0 10px 30px rgba(0,0,0,.08)}
-        .back{transform:rotateY(180deg);align-items:flex-start}
+        h1 { font-weight: 300; text-align: center; margin-bottom: 30px; font-size: 28px; }
+
+        /* Tabs Navigation */
+        .tabs { display: flex; justify-content: center; background: var(--white); border-radius: 12px; padding: 5px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; color: var(--text); font-family: 'Inter'; font-weight: 500; font-size: 15px; cursor: pointer; border-radius: 8px; transition: 0.3s; }
+        .tab-btn.active { background: var(--accent1); color: var(--bg); }
+
+        /* General View Setup */
+        .view { display: none; width: 100%; animation: fadeIn 0.4s ease; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ---- VIEW 1: LISTA (Dashboard) ---- */
+        .list-controls { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .list-controls button { background: var(--white); border: 1px solid var(--border); padding: 8px 15px; border-radius: 8px; cursor: pointer; font-family: 'Inter'; color: var(--text); transition: 0.2s;}
+        .list-controls button:hover { border-color: var(--accent1); color: var(--accent1); }
         
-        .v-main{font-size:42px;font-weight:600;margin:0;display:flex;align-items:center;gap:15px; justify-content:center; width:100%;}
-        .audio-btn{background:transparent;border:none;font-size:24px;cursor:pointer;padding:0;box-shadow:none}
-        .audio-btn:hover{transform:scale(1.2);background:transparent}
+        .list-row { background: var(--white); border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.02);}
+        .row-header { display: flex; align-items: center; padding: 15px 20px; cursor: pointer; gap: 15px; }
+        .row-num { font-size: 14px; color: var(--accent1); font-weight: 600; width: 25px; }
+        .row-verb { font-weight: 600; font-size: 18px; flex: 1; display: flex; align-items: center; gap: 10px; }
         
-        .trans{color:var(--a);font-size:14px;margin-top:15px;transition:opacity 0.3s}
-        .hidden-trans{opacity:0;pointer-events:none}
+        .tap-reveal { background: var(--bg); border: 1px dashed var(--accent1); padding: 6px 15px; border-radius: 20px; font-size: 14px; color: var(--accent1); font-style: italic; transition: 0.3s; text-align: center; min-width: 150px; }
+        .tap-reveal.revealed { background: transparent; border: none; font-style: normal; color: var(--text); }
+        .chevron { transition: transform 0.3s; color: var(--accent1); }
+        .list-row.open .chevron { transform: rotate(180deg); }
         
-        /* Uso de CSS Grid para alinear la lista perfectamente */
-        .c-item{margin:8px 0;font-size:18px;width:100%;border-bottom:1px solid rgba(166,111,93,0.2);padding-bottom:4px;display:grid;grid-template-columns:140px 40px 1fr;align-items:center;text-align:left;}
-        
-        .ex-area{background:var(--w);padding:40px;border-radius:20px;display:none;box-shadow:0 10px 30px rgba(0,0,0,.08)}
-        input{width:90%;padding:15px;border:none;border-bottom:2px solid var(--a);background:transparent;color:var(--d);font-size:20px;text-align:center;outline:none;margin:20px 0;font-family:'Inter'}
-        .feed{font-weight:600;margin-top:15px;height:20px}
-        .foot{display:flex;justify-content:space-between;margin-top:20px}
+        .row-content { display: none; padding: 20px; background: var(--bg); border-top: 1px solid var(--border); font-size: 14px; }
+        .list-row.open .row-content { display: block; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .conj-col h4 { margin: 0 0 10px 0; color: var(--accent2); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;}
+        .c-line { margin-bottom: 6px; display: flex; justify-content: space-between; }
+        .c-pron { opacity: 0.6; }
+
+        /* ---- VIEW 2: FLASHCARDS ---- */
+        .card-box { perspective: 1000px; height: 350px; margin: 0 auto; max-width: 400px; cursor: pointer; }
+        .card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card.flip { transform: rotateY(180deg); }
+        .front, .back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; background: var(--white); border-radius: 20px; padding: 30px; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--border); text-align: center; }
+        .back { transform: rotateY(180deg); }
+        .v-main { font-size: 48px; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 15px; }
+        .v-trans { font-size: 20px; color: var(--accent1); line-height: 1.8; }
+
+        /* ---- VIEW 3: EJERCICIOS ---- */
+        .ex-area { background: var(--white); padding: 40px; border-radius: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--border); text-align: center; }
+        select { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: 'Inter'; font-size: 16px;}
+        input { width: 90%; padding: 15px; border: none; border-bottom: 2px solid var(--accent1); background: transparent; color: var(--text); font-size: 20px; text-align: center; outline: none; margin: 20px 0; font-family: 'Inter';}
+        .feed { font-weight: 600; margin-top: 15px; height: 20px; }
+
+        /* Shared Buttons */
+        .nav-btns { display: flex; justify-content: space-between; max-width: 400px; margin: 20px auto 0 auto; gap: 10px; }
+        .btn-primary { background: var(--accent1); color: var(--bg); border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-family: 'Inter'; flex: 1; transition: 0.2s; font-weight: 500;}
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-sec { background: var(--text); color: var(--bg); border: none; padding: 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
     </style>
 </head>
 <body>
+
 <div class="container">
     <div class="top-bar">
-        <!-- Emojis como botones, con texto flotante (title) si pasan el mouse -->
-        <button class="toggle-btn" onclick="toggleDark()" id="btnDark" title="Modo Día/Noche">🌙</button>
-        <button class="toggle-btn" onclick="toggleTrans()" id="btnTrans" title="Ocultar/Mostrar Traducción">🙈</button>
+        <button class="icon-btn" onclick="toggleDark()" title="Modo Día/Noche">🌙</button>
     </div>
 
-    <h1>Práctica de Verbos</h1>
-    
-    <div class="nav">
-        <select id="tSelect" onchange="chTense()">
-            <option value="pr">Presente</option>
-            <option value="pa">Pasado (Pretérito)</option>
-            <option value="fu">Futuro</option>
-        </select>
-        <button id="bFlash" class="act" onclick="setMode('flash')">Flashcards</button>
-        <button id="bEx" onclick="setMode('ex')">Ejercicios</button>
+    <h1>Verbos Esenciales</h1>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('list')">Lista</button>
+        <button class="tab-btn" onclick="switchTab('flash')">Flashcards</button>
+        <button class="tab-btn" onclick="switchTab('ex')">Ejercicios</button>
     </div>
 
-    <div id="vFlash">
+    <div id="view-list" class="view active">
+        <div class="list-controls">
+            <button onclick="revealAll()">👁️ Revelar Todo</button>
+            <button onclick="hideAll()">🙈 Ocultar Todo</button>
+        </div>
+        <div id="list-container"></div>
+    </div>
+
+    <div id="view-flash" class="view">
         <div class="card-box" onclick="this.querySelector('.card').classList.toggle('flip')">
             <div class="card">
                 <div class="front">
                     <div class="v-main">
                         <span id="fc-v">Verbo</span>
-                        <button class="audio-btn" onclick="playAudio(document.getElementById('fc-v').innerText, event)">🔊</button>
+                        <button class="icon-btn" onclick="playAudio(document.getElementById('fc-v').innerText, event)">🔊</button>
                     </div>
-                    <div class="trans" id="fc-t">Traducción</div>
+                    <p style="color:#999; font-size:14px; margin-top:20px;">Toca para revelar</p>
                 </div>
-                <div class="back" id="fc-c"></div>
+                <div class="back">
+                    <div class="v-trans" id="fc-t">Traducción</div>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div id="vEx" class="ex-area">
-        <div class="v-main" style="font-size:24px;">
-            <span id="ex-p"></span>
-            <!-- Se quitó el botón de audio de aquí -->
+        <div class="nav-btns">
+            <button class="btn-primary" onclick="prevFC()">⬅ Anterior</button>
+            <button class="btn-sec" onclick="shuffleFC()" title="Aleatorio">🔀</button>
+            <button class="btn-primary" onclick="nextFC()">Siguiente ➡</button>
         </div>
-        <input type="text" id="ex-in" autocomplete="off" placeholder="Escribe aquí...">
-        <div id="ex-f" class="feed"></div>
-        <button onclick="check()" style="margin-top:10px;width:100%;background:var(--a);color:var(--b);">Comprobar (Enter)</button>
     </div>
 
-    <div class="foot">
-        <button onclick="prev()">⬅ Anterior</button>
-        <button onclick="shuffle()" style="background:var(--d);color:var(--b);">Aleatorio 🔀</button>
-        <button onclick="next()">Siguiente ➡</button>
+    <div id="view-ex" class="view">
+        <div class="ex-area">
+            <select id="ex-tense" onchange="updateEx()">
+                <option value="pr">Presente</option>
+                <option value="pa">Pasado (Pretérito)</option>
+                <option value="fu">Futuro</option>
+            </select>
+            <div class="v-main" style="justify-content:center; font-size:24px;">
+                <span id="ex-p"></span>
+            </div>
+            <input type="text" id="ex-in" autocomplete="off" placeholder="Escribe aquí...">
+            <div id="ex-f" class="feed"></div>
+            <button class="btn-primary" style="width:100%; margin-top:15px;" onclick="checkEx()">Comprobar (Enter)</button>
+        </div>
     </div>
 </div>
 
 <script>
 const verbs = [
-    { i:"Ser", t:"PT: Ser | EN: To be | FR: Être", pr:["soy","eres","es","somos","son"], pa:["fui","fuiste","fue","fuimos","fueron"], fu:["seré","serás","será","seremos","serán"] },
-    { i:"Estar", t:"PT: Estar | EN: To be | FR: Être", pr:["estoy","estás","está","estamos","están"], pa:["estuve","estuviste","estuvo","estuvimos","estuvieron"], fu:["estaré","estarás","estará","estaremos","estarán"] },
-    { i:"Tener", t:"PT: Ter | EN: To have | FR: Avoir", pr:["tengo","tienes","tiene","tenemos","tienen"], pa:["tuve","tuviste","tuvo","tuvimos","tuvieron"], fu:["tendré","tendrás","tendrá","tendremos","tendrán"] },
-    { i:"Ir", t:"PT: Ir | EN: To go | FR: Aller", pr:["voy","vas","va","vamos","van"], pa:["fui","fuiste","fue","fuimos","fueron"], fu:["iré","irás","irá","iremos","irán"] },
-    { i:"Hacer", t:"PT: Fazer | EN: To do/make | FR: Faire", pr:["hago","haces","hace","hacemos","hacen"], pa:["hice","hiciste","hizo","hicimos","hicieron"], fu:["haré","harás","hará","haremos","harán"] },
-    { i:"Poder", t:"PT: Poder | EN: To be able to | FR: Pouvoir", pr:["puedo","puedes","puede","podemos","pueden"], pa:["pude","pudiste","pudo","pudimos","pudieron"], fu:["podré","podrás","podrá","podremos","podrán"] },
-    { i:"Decir", t:"PT: Dizer | EN: To say | FR: Dire", pr:["digo","dices","dice","decimos","dicen"], pa:["dije","dijiste","dijo","dijimos","dijeron"], fu:["diré","dirás","dirá","diremos","dirán"] },
-    { i:"Querer", t:"PT: Querer | EN: To want | FR: Vouloir", pr:["quiero","quieres","quiere","queremos","quieren"], pa:["quise","quisiste","quiso","quisimos","quisieron"], fu:["querré","querrás","querrá","querremos","querrán"] },
-    { i:"Ver", t:"PT: Ver | EN: To see | FR: Voir", pr:["veo","ves","ve","vemos","ven"], pa:["vi","viste","vio","vimos","vieron"], fu:["veré","verás","verá","veremos","verán"] },
-    { i:"Saber", t:"PT: Saber | EN: To know | FR: Savoir", pr:["sé","sabes","sabe","sabemos","saben"], pa:["supe","supiste","supo","supimos","supieron"], fu:["sabré","sabrás","sabrá","sabremos","sabrán"] },
-    { i:"Dar", t:"PT: Dar | EN: To give | FR: Donner", pr:["doy","das","da","damos","dan"], pa:["di","diste","dio","dimos","dieron"], fu:["daré","darás","dará","daremos","darán"] },
-    { i:"Venir", t:"PT: Vir | EN: To come | FR: Venir", pr:["vengo","vienes","viene","venimos","vienen"], pa:["vine","viniste","vino","vinimos","vinieron"], fu:["vendré","vendrás","vendrá","vendremos","vendrán"] },
-    { i:"Hablar", t:"PT: Falar | EN: To speak | FR: Parler", pr:["hablo","hablas","habla","hablamos","hablan"], pa:["hablé","hablaste","habló","hablamos","hablaron"], fu:["hablaré","hablarás","hablará","hablaremos","hablarán"] },
-    { i:"Comer", t:"PT: Comer | EN: To eat | FR: Manger", pr:["como","comes","come","comemos","comen"], pa:["comí","comiste","comió","comimos","comieron"], fu:["comeré","comerás","comerá","comeremos","comerán"] },
-    { i:"Vivir", t:"PT: Viver | EN: To live | FR: Vivre", pr:["vivo","vives","vive","vivimos","viven"], pa:["viví","viviste","vivió","vivimos","vivieron"], fu:["viviré","vivirás","vivirá","viviremos","vivirán"] },
+    { i:"Ser", t:"PT: Ser<br>EN: To be<br>FR: Être", pr:["soy","eres","es","somos","son"], pa:["fui","fuiste","fue","fuimos","fueron"], fu:["seré","serás","será","seremos","serán"] },
+    { i:"Estar", t:"PT: Estar<br>EN: To be<br>FR: Être", pr:["estoy","estás","está","estamos","están"], pa:["estuve","estuviste","estuvo","estuvimos","estuvieron"], fu:["estaré","estarás","estará","estaremos","estarán"] },
+    { i:"Tener", t:"PT: Ter<br>EN: To have<br>FR: Avoir", pr:["tengo","tienes","tiene","tenemos","tienen"], pa:["tuve","tuviste","tuvo","tuvimos","tuvieron"], fu:["tendré","tendrás","tendrá","tendremos","tendrán"] },
+    { i:"Ir", t:"PT: Ir<br>EN: To go<br>FR: Aller", pr:["voy","vas","va","vamos","van"], pa:["fui","fuiste","fue","fuimos","fueron"], fu:["iré","irás","irá","iremos","irán"] },
+    { i:"Hacer", t:"PT: Fazer<br>EN: To do/make<br>FR: Faire", pr:["hago","haces","hace","hacemos","hacen"], pa:["hice","hiciste","hizo","hicimos","hicieron"], fu:["haré","harás","hará","haremos","harán"] },
+    { i:"Poder", t:"PT: Poder<br>EN: To be able to<br>FR: Pouvoir", pr:["puedo","puedes","puede","podemos","pueden"], pa:["pude","pudiste","pudo","pudimos","pudieron"], fu:["podré","podrás","podrá","podremos","podrán"] },
+    { i:"Decir", t:"PT: Dizer<br>EN: To say<br>FR: Dire", pr:["digo","dices","dice","decimos","dicen"], pa:["dije","dijiste","dijo","dijimos","dijeron"], fu:["diré","dirás","dirá","diremos","dirán"] },
+    { i:"Querer", t:"PT: Querer<br>EN: To want<br>FR: Vouloir", pr:["quiero","quieres","quiere","queremos","quieren"], pa:["quise","quisiste","quiso","quisimos","quisieron"], fu:["querré","querrás","querrá","querremos","querrán"] },
+    { i:"Ver", t:"PT: Ver<br>EN: To see<br>FR: Voir", pr:["veo","ves","ve","vemos","ven"], pa:["vi","viste","vio","vimos","vieron"], fu:["veré","verás","verá","veremos","verán"] },
+    { i:"Saber", t:"PT: Saber<br>EN: To know<br>FR: Savoir", pr:["sé","sabes","sabe","sabemos","saben"], pa:["supe","supiste","supo","supimos","supieron"], fu:["sabré","sabrás","sabrá","sabremos","sabrán"] },
+    { i:"Dar", t:"PT: Dar<br>EN: To give<br>FR: Donner", pr:["doy","das","da","damos","dan"], pa:["di","diste","dio","dimos","dieron"], fu:["daré","darás","dará","daremos","darán"] },
+    { i:"Venir", t:"PT: Vir<br>EN: To come<br>FR: Venir", pr:["vengo","vienes","viene","venimos","vienen"], pa:["vine","viniste","vino","vinimos","vinieron"], fu:["vendré","vendrás","vendrá","vendremos","vendrán"] },
+    { i:"Hablar", t:"PT: Falar<br>EN: To speak<br>FR: Parler", pr:["hablo","hablas","habla","hablamos","hablan"], pa:["hablé","hablaste","habló","hablamos","hablaron"], fu:["hablaré","hablarás","hablará","hablaremos","hablarán"] },
+    { i:"Comer", t:"PT: Comer<br>EN: To eat<br>FR: Manger", pr:["como","comes","come","comemos","comen"], pa:["comí","comiste","comió","comimos","comieron"], fu:["comeré","comerás","comerá","comeremos","comerán"] },
+    { i:"Vivir", t:"PT: Viver<br>EN: To live<br>FR: Vivre", pr:["vivo","vives","vive","vivimos","viven"], pa:["viví","viviste","vivió","vivimos","vivieron"], fu:["viviré","vivirás","vivirá","viviremos","vivirán"] }
     { i:"Pensar", t:"PT: Pensar | EN: To think | FR: Penser", pr:["pienso","piensas","piensa","pensamos","piensan"], pa:["pensé","pensaste","pensó","pensamos","pensaron"], fu:["pensaré","pensarás","pensará","pensaremos","pensarán"] },
     { i:"Encontrar", t:"PT: Encontrar | EN: To find | FR: Trouver", pr:["encuentro","encuentras","encuentra","encontramos","encuentran"], pa:["encontré","encontraste","encontró","encontramos","encontraron"], fu:["encontraré","encontrarás","encontrará","encontraremos","encontrarán"] },
     { i:"Salir", t:"PT: Sair | EN: To go out | FR: Sortir", pr:["salgo","sales","sale","salimos","salen"], pa:["salí","saliste","salió","salimos","salieron"], fu:["saldré","saldrás","saldrá","saldremos","saldrán"] },
@@ -146,110 +205,119 @@ const verbs = [
     { i:"Comprender", t:"PT: Compreender | EN: To understand | FR: Comprendre", pr:["comprendo","comprendes","comprende","comprendemos","comprenden"], pa:["comprendí","comprendiste","comprendió","comprendimos","comprendieron"], fu:["comprenderé","comprenderás","comprenderá","comprenderemos","comprenderán"] }
 ];
 
-const pron = ["Yo", "Tú", "Él/Ella/Ud.", "Nosotros", "Ellos/Ellas/Uds."];
-let idx=0, tn="pr", md="flash", pIdx=0;
-let isCorrect = false;
+const pron = ["Yo", "Tú", "Él/Ella/Ud.", "Nosotros", "Ellos/Uds."];
+let currentMode = 'list';
+let fcIdx = 0, exIdx = 0, exPIdx = 0, isCorrect = false;
 
-function up(){
-    const v=verbs[idx];
-    document.getElementById('fc-v').innerText=v.i; 
-    document.getElementById('fc-t').innerText=v.t;
-    let h=""; 
-    // Usando 3 columnas: Pronombre | Audio | Conjugación
-    v[tn].forEach((c,i)=>h+=`<div class="c-item"><b>${pron[i]}</b> <button class="audio-btn" style="font-size:16px" onclick="playAudio('${c}', event)">🔊</button> <span>${c}</span></div>`);
-    document.getElementById('fc-c').innerHTML=h;
+/* ---- GENERAL ---- */
+function switchTab(tab) {
+    currentMode = tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     
-    if(md==='ex'){
-        document.getElementById('ex-p').innerText=`${pron[pIdx]} (${v.i})`;
-        document.getElementById('ex-f').innerText=""; 
-        document.getElementById('ex-in').value="";
-        document.getElementById('ex-in').focus();
-        isCorrect = false;
-    }
-}
-
-function setMode(m){
-    md=m; 
-    document.getElementById('vFlash').style.display = m==='flash' ? 'block' : 'none';
-    document.getElementById('vEx').style.display = m==='ex' ? 'block' : 'none';
-    document.getElementById('bFlash').className = m==='flash' ? 'act' : ''; 
-    document.getElementById('bEx').className = m==='ex' ? 'act' : '';
-    up();
-}
-
-function chTense(){ tn=document.getElementById('tSelect').value; up(); }
-
-function check(){
-    if(isCorrect) { next(); return; }
-    const u=document.getElementById('ex-in').value.toLowerCase().trim();
-    const c=verbs[idx][tn][pIdx]; 
-    const f=document.getElementById('ex-f');
+    event.target.classList.add('active');
+    document.getElementById(`view-${tab}`).classList.add('active');
     
-    if(u===c){ 
-        f.innerText="¡Correcto!"; f.style.color="green"; isCorrect = true;
-        // Se quitó el auto-play de audio aquí
-        setTimeout(()=>{ if(isCorrect) next(); }, 1500); 
-    } else { 
-        f.innerText=`Incorrecto. Respuesta: ${c}`; f.style.color="red"; 
-    }
+    if(tab === 'flash') updateFC();
+    if(tab === 'ex') { updateEx(); document.getElementById('ex-in').focus(); }
 }
 
-function next(){
-    isCorrect = false;
-    if(md==='ex'){ pIdx++; if(pIdx >= pron.length){ pIdx=0; idx++; } } 
-    else { idx++; document.querySelector('.card').classList.remove('flip'); }
-    if(idx >= verbs.length) idx=0; 
-    up();
+function toggleDark() { document.body.classList.toggle('dark-mode'); }
+function playAudio(text, e) {
+    if(e) e.stopPropagation();
+    let utt = new SpeechSynthesisUtterance(text); utt.lang = 'es-CO'; window.speechSynthesis.speak(utt);
 }
 
-function prev(){
-    isCorrect = false;
-    if(md==='ex'){ pIdx--; if(pIdx < 0){ pIdx=pron.length-1; idx--; } } 
-    else { idx--; document.querySelector('.card').classList.remove('flip'); }
-    if(idx < 0) idx=verbs.length-1; 
-    up();
+/* ---- LIST VIEW ---- */
+function buildList() {
+    const cont = document.getElementById('list-container');
+    let html = '';
+    verbs.forEach((v, i) => {
+        // Generamos las columnas de conjugación
+        let cPr='', cPa='', cFu='';
+        pron.forEach((p, j) => {
+            cPr += `<div class="c-line"><span class="c-pron">${p}</span> <span>${v.pr[j]}</span></div>`;
+            cPa += `<div class="c-line"><span class="c-pron">${p}</span> <span>${v.pa[j]}</span></div>`;
+            cFu += `<div class="c-line"><span class="c-pron">${p}</span> <span>${v.fu[j]}</span></div>`;
+        });
+        
+        let transSingleLine = v.t.replace(/<br>/g, " | "); // Formato simple para la barra
+
+        html += `
+        <div class="list-row" id="row-${i}">
+            <div class="row-header" onclick="toggleRow(${i}, event)">
+                <span class="row-num">${i+1}.</span>
+                <div class="row-verb">
+                    <button class="icon-btn" style="font-size:18px;" onclick="playAudio('${v.i}', event)">🔊</button>
+                    ${v.i}
+                </div>
+                <div class="tap-reveal" data-trans="${transSingleLine}" onclick="revealMask(this, event)">tap to reveal</div>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="row-content">
+                <div class="grid-3">
+                    <div class="conj-col"><h4>Presente</h4>${cPr}</div>
+                    <div class="conj-col"><h4>Pret. Perfecto</h4>${cPa}</div>
+                    <div class="conj-col"><h4>Futuro</h4>${cFu}</div>
+                </div>
+            </div>
+        </div>`;
+    });
+    cont.innerHTML = html;
 }
 
-function shuffle(){
-    verbs.sort(() => Math.random() - 0.5);
-    idx = 0;
-    pIdx = Math.floor(Math.random() * pron.length);
+function toggleRow(i, e) { document.getElementById(`row-${i}`).classList.toggle('open'); }
+function revealMask(el, e) {
+    e.stopPropagation();
+    if(el.classList.contains('revealed')) { el.classList.remove('revealed'); el.innerHTML = "tap to reveal"; } 
+    else { el.classList.add('revealed'); el.innerHTML = el.getAttribute('data-trans'); }
+}
+function revealAll() { document.querySelectorAll('.tap-reveal').forEach(el => { el.classList.add('revealed'); el.innerHTML = el.getAttribute('data-trans'); }); }
+function hideAll() { document.querySelectorAll('.tap-reveal').forEach(el => { el.classList.remove('revealed'); el.innerHTML = "tap to reveal"; }); }
+
+/* ---- FLASHCARD VIEW ---- */
+function updateFC() {
     document.querySelector('.card').classList.remove('flip');
-    up();
+    document.getElementById('fc-v').innerText = verbs[fcIdx].i;
+    document.getElementById('fc-t').innerHTML = verbs[fcIdx].t;
+}
+function nextFC() { fcIdx++; if(fcIdx >= verbs.length) fcIdx=0; updateFC(); }
+function prevFC() { fcIdx--; if(fcIdx < 0) fcIdx=verbs.length-1; updateFC(); }
+function shuffleFC() { fcIdx = Math.floor(Math.random() * verbs.length); updateFC(); }
+
+/* ---- EXERCISE VIEW ---- */
+function updateEx() {
+    isCorrect = false;
+    document.getElementById('ex-f').innerText = ""; document.getElementById('ex-in').value = "";
+    document.getElementById('ex-p').innerText = `${pron[exPIdx]} (${verbs[exIdx].i})`;
+}
+function checkEx() {
+    if(isCorrect) { nextEx(); return; }
+    const tn = document.getElementById('ex-tense').value;
+    const u = document.getElementById('ex-in').value.toLowerCase().trim();
+    const c = verbs[exIdx][tn][exPIdx];
+    const f = document.getElementById('ex-f');
+    if(u===c) { f.innerText="¡Correcto!"; f.style.color="var(--accent2)"; isCorrect = true; setTimeout(()=>{ if(isCorrect) nextEx(); }, 1000); } 
+    else { f.innerText=`Incorrecto. Respuesta: ${c}`; f.style.color="var(--accent1)"; }
+}
+function nextEx() {
+    exPIdx++; if(exPIdx >= pron.length) { exPIdx=0; exIdx = Math.floor(Math.random() * verbs.length); } // Salto aleatorio de verbo al completar pronombres
+    updateEx();
 }
 
-function playAudio(text, event) {
-    if(event) event.stopPropagation();
-    let utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'es-CO';
-    window.speechSynthesis.speak(utterance);
-}
-
-function toggleDark() {
-    document.body.classList.toggle('dark-mode');
-    document.getElementById('btnDark').innerText = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-}
-
-function toggleTrans() {
-    const t = document.getElementById('fc-t');
-    t.classList.toggle('hidden-trans');
-    document.getElementById('btnTrans').innerText = t.classList.contains('hidden-trans') ? '👁️' : '🙈';
-}
-
+// Shortcuts
 document.addEventListener('keydown', (e) => {
-    if (e.target.tagName === 'INPUT') {
-        if (e.key === 'Enter') check();
-        return; 
-    }
-    if (e.key === 'ArrowRight') next();
-    if (e.key === 'ArrowLeft') prev();
-    if (e.key === ' ') { 
-        e.preventDefault(); 
-        if(md==='flash') document.querySelector('.card').classList.toggle('flip');
+    if (currentMode === 'ex' && e.target.tagName === 'INPUT') { if (e.key === 'Enter') checkEx(); return; }
+    if (currentMode === 'flash') {
+        if (e.key === 'ArrowRight') nextFC();
+        if (e.key === 'ArrowLeft') prevFC();
+        if (e.key === ' ') { e.preventDefault(); document.querySelector('.card').classList.toggle('flip'); }
     }
 });
 
-up();
+// Init
+buildList();
+updateFC();
 </script>
 </body>
 </html>
