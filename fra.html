@@ -217,10 +217,19 @@ function shuffle(){
 function playAudio(text, event) {
     if(event) event.stopPropagation();
     let utterance = new SpeechSynthesisUtterance(text);
-    // Configurado el acento nativo de Francia
     utterance.lang = 'fr-FR';
+    let voices = window.speechSynthesis.getVoices();
+    let frenchVoice = voices.find(voice => voice.lang.includes('fr'));
+    if (frenchVoice) {
+        utterance.voice = frenchVoice;
+    }
+    
     window.speechSynthesis.speak(utterance);
 }
+
+window.speechSynthesis.onvoiceschanged = () => {
+    window.speechSynthesis.getVoices();
+};
 
 function toggleDark() {
     document.body.classList.toggle('dark-mode');
