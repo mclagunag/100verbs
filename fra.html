@@ -2,91 +2,140 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maîtrise des Verbes | Français</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Verbes | Français</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root{--a:#A66F5D;--d:#34231D;--b:#FCFAF2;--w:#FFF}
-        body.dark-mode{--a:#D29A88;--d:#FCFAF2;--b:#1A110E;--w:#2C1E19}
-        body{font-family:'Inter',sans-serif;background:var(--b);color:var(--d);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px;transition:background 0.3s, color 0.3s}
-        .container{max-width:600px;width:100%;text-align:center}
+        :root {
+            --bg: #FCFAF2;       
+            --text: #34231D;     
+            --accent1: #A66F5D;  
+            --accent2: #729B79;  
+            --soft1: #F0E6FF;    
+            --soft2: #FFFBE6;    
+            --white: #FFFFFF;
+            --border: rgba(52, 35, 29, 0.15);
+        }
+        body.dark-mode {
+            --bg: #1A1210; --text: #FCFAF2; --white: #2C1E19; --border: rgba(252, 250, 242, 0.1);
+            --soft1: #3D2D3D; --soft2: #3D3D2D;
+        }
+        body {
+            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text);
+            margin: 0; display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; padding: 20px; transition: 0.3s;
+        }
+        .container { max-width: 700px; width: 100%; }
         
-        .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;font-size:20px}
-        .toggle-btn{background:transparent;border:none;color:var(--d);padding:5px;cursor:pointer;font-size:24px;transition:transform 0.3s}
-        .toggle-btn:hover{transform:scale(1.1)}
+        .top-bar { display: flex; justify-content: flex-end; margin-bottom: 15px; }
+        .icon-btn { background: transparent; border: none; font-size: 24px; cursor: pointer; transition: 0.2s; color: var(--accent1); }
 
-        h1{font-weight:300;margin-bottom:30px}
-        .nav{display:flex;justify-content:center;gap:10px;margin-bottom:30px;flex-wrap:wrap;}
-        button,select{font-family:'Inter';padding:12px 20px;border-radius:8px;border:1px solid var(--a);background:var(--w);color:var(--d);cursor:pointer;font-size:14px;transition:.3s}
-        button:hover,.act{background:var(--a);color:var(--b)}
-        .card-box{perspective:1000px;height:380px;margin-bottom:30px;cursor:pointer}
-        .card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .6s}
-        .card.flip{transform:rotateY(180deg)}
-        .front,.back{position:absolute;width:100%;height:100%;backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;background:var(--w);border-radius:20px;padding:30px;box-sizing:border-box;box-shadow:0 10px 30px rgba(0,0,0,.08)}
-        .back{transform:rotateY(180deg);align-items:flex-start}
+        h1 { font-weight: 300; text-align: center; margin-bottom: 25px; font-size: 28px; color: var(--text); }
+
+        .tabs { display: flex; justify-content: center; background: var(--white); border-radius: 14px; padding: 6px; margin-bottom: 30px; border: 1px solid var(--border); }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; color: var(--text); font-weight: 500; cursor: pointer; border-radius: 10px; transition: 0.3s; }
+        .tab-btn.active { background: var(--accent1); color: #FFF; box-shadow: 0 4px 10px rgba(166, 111, 93, 0.3); }
+
+        .view { display: none; width: 100%; animation: fadeIn 0.4s ease; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .list-controls { display: flex; justify-content: space-between; margin-bottom: 20px; gap: 10px; }
+        .list-controls button { background: var(--white); border: 1px solid var(--accent1); padding: 10px 18px; border-radius: 10px; cursor: pointer; color: var(--accent1); font-weight: 500; flex: 1; transition: 0.2s; }
+        .list-controls button:hover { background: var(--accent1); color: #FFF; }
         
-        .v-main{font-size:42px;font-weight:600;margin:0;display:flex;align-items:center;gap:15px; justify-content:center; width:100%;}
-        .audio-btn{background:transparent;border:none;font-size:24px;cursor:pointer;padding:0;box-shadow:none}
-        .audio-btn:hover{transform:scale(1.2);background:transparent}
+        .list-row { background: var(--white); border-radius: 15px; margin-bottom: 12px; border: 1px solid var(--border); overflow: hidden; }
+        .row-header { display: flex; align-items: center; padding: 18px 22px; cursor: pointer; gap: 15px; }
+        .row-num { font-size: 13px; color: var(--accent1); font-weight: 700; width: 25px; opacity: 0.7; }
+        .row-verb { font-weight: 600; font-size: 19px; flex: 1; color: var(--text); }
         
-        .trans{color:var(--a);font-size:14px;margin-top:15px;transition:opacity 0.3s}
-        .hidden-trans{opacity:0;pointer-events:none}
+        .tap-reveal { background: var(--bg); border: 1px solid var(--accent1); padding: 7px 16px; border-radius: 25px; font-size: 13px; color: var(--accent1); font-weight: 500; transition: 0.3s; text-align: center; min-width: 130px; }
+        .tap-reveal.revealed { background: var(--accent2); border-color: var(--accent2); color: #FFF; }
         
-        /* Uso de CSS Grid para alinear la lista (140px de espacio para los pronombres) */
-        .c-item{margin:8px 0;font-size:18px;width:100%;border-bottom:1px solid rgba(166,111,93,0.2);padding-bottom:4px;display:grid;grid-template-columns:140px 40px 1fr;align-items:center;text-align:left;}
+        .row-content { display: none; padding: 25px; background: var(--bg); border-top: 1px solid var(--border); }
+        .list-row.open .row-content { display: block; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        .conj-col { padding: 15px; border-radius: 10px; }
+        .conj-col:nth-child(1) { background: var(--soft1); }
+        .conj-col:nth-child(2) { background: var(--soft2); }
+        .conj-col:nth-child(3) { background: var(--white); border: 1px solid var(--border); }
+        .conj-col h4 { margin: 0 0 12px 0; color: var(--accent1); font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; text-align: center; border-bottom: 1px solid rgba(166,111,93,0.2); padding-bottom: 5px;}
+        .c-line { margin-bottom: 7px; font-size: 14px; display: flex; justify-content: space-between; }
+        .c-pron { opacity: 0.5; font-size: 12px; }
+
+        .card-box { perspective: 1000px; height: 380px; margin: 0 auto; max-width: 420px; cursor: pointer; }
+        .card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card.flip { transform: rotateY(180deg); }
+        .front, .back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; background: var(--white); border-radius: 25px; padding: 40px; box-sizing: border-box; box-shadow: 0 8px 25px rgba(0,0,0,0.04); border: 1px solid var(--border); }
+        .back { transform: rotateY(180deg); }
+        .v-main { font-size: 52px; font-weight: 600; margin: 0; color: var(--text); }
+        .v-trans { font-size: 22px; color: var(--accent1); line-height: 1.8; font-weight: 400; }
+
+        .ex-area { background: var(--white); padding: 45px; border-radius: 25px; max-width: 420px; margin: 0 auto; border: 1px solid var(--border); text-align: center; }
+        select { width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 16px; outline: none;}
+        input { width: 100%; padding: 15px 0; border: none; border-bottom: 2px solid var(--accent1); background: transparent; color: var(--text); font-size: 24px; text-align: center; outline: none; margin: 20px 0; }
         
-        .ex-area{background:var(--w);padding:40px;border-radius:20px;display:none;box-shadow:0 10px 30px rgba(0,0,0,.08)}
-        input{width:90%;padding:15px;border:none;border-bottom:2px solid var(--a);background:transparent;color:var(--d);font-size:20px;text-align:center;outline:none;margin:20px 0;font-family:'Inter'}
-        .feed{font-weight:600;margin-top:15px;height:20px}
-        .foot{display:flex;justify-content:space-between;margin-top:20px}
+        .nav-btns { display: flex; justify-content: space-between; max-width: 420px; margin: 25px auto 0; gap: 12px; }
+        .btn-primary { background: var(--accent1); color: #FFF; border: none; padding: 14px 25px; border-radius: 12px; cursor: pointer; flex: 1; font-weight: 600; transition: 0.2s; }
+        .btn-sec { background: var(--text); color: #FFF; border: none; padding: 14px; border-radius: 12px; cursor: pointer; width: 55px; }
+
+        .audio-icon { color: var(--accent1); cursor: pointer; margin-left: 10px; font-size: 20px; vertical-align: middle; }
     </style>
 </head>
 <body>
+
 <div class="container">
     <div class="top-bar">
-        <button class="toggle-btn" onclick="toggleDark()" id="btnDark" title="Mode Jour/Nuit">🌙</button>
-        <button class="toggle-btn" onclick="toggleTrans()" id="btnTrans" title="Masquer/Afficher Traduction">🙈</button>
+        <button class="icon-btn" onclick="toggleDark()" title="Mode Nuit">🌙</button>
     </div>
 
     <h1>Pratique des Verbes</h1>
-    
-    <div class="nav">
-        <select id="tSelect" onchange="chTense()">
-            <option value="pr">Présent</option>
-            <option value="pa">Passé Composé</option>
-            <option value="fu">Futur Simple</option>
-        </select>
-        <button id="bFlash" class="act" onclick="setMode('flash')">Flashcards</button>
-        <button id="bEx" onclick="setMode('ex')">Exercices</button>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('list')">Liste</button>
+        <button class="tab-btn" onclick="switchTab('flash')">Flashcards</button>
+        <button class="tab-btn" onclick="switchTab('ex')">Exercices</button>
     </div>
 
-    <div id="vFlash">
+    <div id="view-list" class="view active">
+        <div class="list-controls">
+            <button onclick="revealAll()">👁️ Tout révéler</button>
+            <button onclick="hideAll()">🙈 Tout masquer</button>
+        </div>
+        <div id="list-container"></div>
+    </div>
+
+    <div id="view-flash" class="view">
         <div class="card-box" onclick="this.querySelector('.card').classList.toggle('flip')">
             <div class="card">
                 <div class="front">
-                    <div class="v-main">
-                        <span id="fc-v">Verbe</span>
-                        <button class="audio-btn" onclick="playAudio(document.getElementById('fc-v').innerText, event)">🔊</button>
-                    </div>
-                    <div class="trans" id="fc-t">Traduction</div>
+                    <p class="v-main" id="fc-v">Verbe</p>
+                    <span class="audio-icon" onclick="playAudio(document.getElementById('fc-v').innerText, event)">🔊</span>
+                    <p style="color:#999; font-size:13px; margin-top:30px;">Toucher pour traduire</p>
                 </div>
-                <div class="back" id="fc-c"></div>
+                <div class="back">
+                    <div class="v-trans" id="fc-t">Traduction</div>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div id="vEx" class="ex-area">
-        <div class="v-main" style="font-size:24px;">
-            <span id="ex-p"></span>
+        <div class="nav-btns">
+            <button class="btn-primary" onclick="prevFC()">Précédent</button>
+            <button class="btn-sec" onclick="shuffleFC()" title="Aléatoire">🔀</button>
+            <button class="btn-primary" onclick="nextFC()">Suivant</button>
         </div>
-        <input type="text" id="ex-in" autocomplete="off" placeholder="Écrivez ici...">
-        <div id="ex-f" class="feed"></div>
-        <button onclick="check()" style="margin-top:10px;width:100%;background:var(--a);color:var(--b);">Vérifier (Entrée)</button>
     </div>
 
-    <div class="foot">
-        <button onclick="prev()">⬅ Précédent</button>
-        <button onclick="shuffle()" style="background:var(--d);color:var(--b);">Aléatoire 🔀</button>
-        <button onclick="next()">Suivant ➡</button>
+    <div id="view-ex" class="view">
+        <div class="ex-area">
+            <select id="ex-tense" onchange="updateEx()">
+                <option value="pr">Présent</option>
+                <option value="pa">Passé Composé</option>
+                <option value="fu">Futur Simple</option>
+            </select>
+            <p id="ex-p" style="font-size: 22px; font-weight: 500;"></p>
+            <input type="text" id="ex-in" autocomplete="off" placeholder="...">
+            <div id="ex-f" class="feed"></div>
+            <button class="btn-primary" style="width:100%; margin-top:10px;" onclick="checkEx()">Vérifier</button>
+        </div>
     </div>
 </div>
 
@@ -145,79 +194,25 @@ const verbs = [
 ];
 
 const pron = ["Je/J'", "Tu", "Il/Elle", "Nous", "Vous", "Ils/Elles"];
-let idx=0, tn="pr", md="flash", pIdx=0;
-let isCorrect = false;
+let fcIdx = 0, exIdx = 0, exPIdx = 0, isCorrect = false;
 
-function up(){
-    const v=verbs[idx];
-    document.getElementById('fc-v').innerText=v.i; 
-    document.getElementById('fc-t').innerText=v.t;
-    let h=""; 
-    v[tn].forEach((c,i)=>h+=`<div class="c-item"><b>${pron[i]}</b> <button class="audio-btn" style="font-size:16px" onclick="playAudio('${c}', event)">🔊</button> <span>${c}</span></div>`);
-    document.getElementById('fc-c').innerHTML=h;
-    
-    if(md==='ex'){
-        document.getElementById('ex-p').innerText=`${pron[pIdx]} (${v.i})`;
-        document.getElementById('ex-f').innerText=""; 
-        document.getElementById('ex-in').value="";
-        document.getElementById('ex-in').focus();
-        isCorrect = false;
-    }
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById(`view-${tab}`).classList.add('active');
+    if(tab==='flash') updateFC();
+    if(tab==='ex') { updateEx(); setTimeout(()=>document.getElementById('ex-in').focus(), 100); }
 }
 
-function setMode(m){
-    md=m; 
-    document.getElementById('vFlash').style.display = m==='flash' ? 'block' : 'none';
-    document.getElementById('vEx').style.display = m==='ex' ? 'block' : 'none';
-    document.getElementById('bFlash').className = m==='flash' ? 'act' : ''; 
-    document.getElementById('bEx').className = m==='ex' ? 'act' : '';
-    up();
-}
+function toggleDark() { document.body.classList.toggle('dark-mode'); }
 
-function chTense(){ tn=document.getElementById('tSelect').value; up(); }
-
-function check(){
-    if(isCorrect) { next(); return; }
-    const u=document.getElementById('ex-in').value.toLowerCase().trim();
-    const c=verbs[idx][tn][pIdx]; 
-    const f=document.getElementById('ex-f');
-    
-    if(u===c){ 
-        f.innerText="Correct !"; f.style.color="green"; isCorrect = true;
-        setTimeout(()=>{ if(isCorrect) next(); }, 1500); 
-    } else { 
-        f.innerText=`Incorrect. Réponse : ${c}`; f.style.color="red"; 
-    }
-}
-
-function next(){
-    isCorrect = false;
-    if(md==='ex'){ pIdx++; if(pIdx >= pron.length){ pIdx=0; idx++; } } 
-    else { idx++; document.querySelector('.card').classList.remove('flip'); }
-    if(idx >= verbs.length) idx=0; 
-    up();
-}
-
-function prev(){
-    isCorrect = false;
-    if(md==='ex'){ pIdx--; if(pIdx < 0){ pIdx=pron.length-1; idx--; } } 
-    else { idx--; document.querySelector('.card').classList.remove('flip'); }
-    if(idx < 0) idx=verbs.length-1; 
-    up();
-}
-
-function shuffle(){
-    verbs.sort(() => Math.random() - 0.5);
-    idx = 0;
-    pIdx = Math.floor(Math.random() * pron.length);
-    document.querySelector('.card').classList.remove('flip');
-    up();
-}
-
-function playAudio(text, event) {
-    if(event) event.stopPropagation();
+// AUDIO AVEC ACCENT FRANÇAIS
+function playAudio(text, e) {
+    if(e) e.stopPropagation();
     let utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'fr-FR';
+    
     let voices = window.speechSynthesis.getVoices();
     let frenchVoice = voices.find(voice => voice.lang.includes('fr'));
     if (frenchVoice) {
@@ -231,31 +226,83 @@ window.speechSynthesis.onvoiceschanged = () => {
     window.speechSynthesis.getVoices();
 };
 
-function toggleDark() {
-    document.body.classList.toggle('dark-mode');
-    document.getElementById('btnDark').innerText = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+function buildList() {
+    const cont = document.getElementById('list-container');
+    let html = '';
+    verbs.forEach((v, i) => {
+        let cPr='', cPa='', cFu='';
+        pron.forEach((p, j) => {
+            cPr += `<div class="c-line"><span class="c-pron">${p}</span> <span>${v.pr[j]}</span></div>`;
+            cPa += `<div class="c-line"><span class="c-pron">${p}</span> <span>${v.pa[j]}</span></div>`;
+            cFu += `<div class="c-line"><span class="c-pron">${p}</span> <span>${v.fu[j]}</span></div>`;
+        });
+        let transLine = v.t.replace(/<br>/g, " | ");
+        html += `
+        <div class="list-row" id="row-${i}">
+            <div class="row-header" onclick="toggleRow(${i})">
+                <span class="row-num">${i+1}.</span>
+                <div class="row-verb">${v.i} <span class="audio-icon" onclick="playAudio('${v.i}', event)">🔊</span></div>
+                <div class="tap-reveal" data-trans="${transLine}" onclick="revealMask(this, event)">toucher pour traduire</div>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="row-content">
+                <div class="grid-3">
+                    <div class="conj-col"><h4>Présent</h4>${cPr}</div>
+                    <div class="conj-col"><h4>Passé Composé</h4>${cPa}</div>
+                    <div class="conj-col"><h4>Futur Simple</h4>${cFu}</div>
+                </div>
+            </div>
+        </div>`;
+    });
+    cont.innerHTML = html;
 }
 
-function toggleTrans() {
-    const t = document.getElementById('fc-t');
-    t.classList.toggle('hidden-trans');
-    document.getElementById('btnTrans').innerText = t.classList.contains('hidden-trans') ? '👁️' : '🙈';
+function toggleRow(i) { document.getElementById(`row-${i}`).classList.toggle('open'); }
+function revealMask(el, e) {
+    e.stopPropagation();
+    if(el.classList.contains('revealed')) { el.classList.remove('revealed'); el.innerHTML = "toucher pour traduire"; }
+    else { el.classList.add('revealed'); el.innerHTML = el.getAttribute('data-trans'); }
 }
+function revealAll() { document.querySelectorAll('.tap-reveal').forEach(el => { el.classList.add('revealed'); el.innerHTML = el.getAttribute('data-trans'); }); }
+function hideAll() { document.querySelectorAll('.tap-reveal').forEach(el => { el.classList.remove('revealed'); el.innerHTML = "toucher pour traduire"; }); }
+
+function updateFC() {
+    document.querySelector('.card').classList.remove('flip');
+    document.getElementById('fc-v').innerText = verbs[fcIdx].i;
+    document.getElementById('fc-t').innerText = verbs[fcIdx].t.replace(/<br>/g, " | ");
+}
+function nextFC() { fcIdx = (fcIdx + 1) % verbs.length; updateFC(); }
+function prevFC() { fcIdx = (fcIdx - 1 + verbs.length) % verbs.length; updateFC(); }
+function shuffleFC() { fcIdx = Math.floor(Math.random() * verbs.length); updateFC(); }
+
+function updateEx() {
+    isCorrect = false; document.getElementById('ex-f').innerText = ""; document.getElementById('ex-in').value = "";
+    document.getElementById('ex-p').innerText = `${pron[exPIdx]} (${verbs[exIdx].i})`;
+}
+function checkEx() {
+    if(isCorrect) { nextEx(); return; }
+    const tn = document.getElementById('ex-tense').value;
+    const u = document.getElementById('ex-in').value.toLowerCase().trim();
+    const c = verbs[exIdx][tn][exPIdx];
+    if(u===c) { 
+        document.getElementById('ex-f').innerText="Correct !"; document.getElementById('ex-f').style.color="var(--accent2)"; 
+        isCorrect = true; setTimeout(()=>nextEx(), 1000); 
+    } else { 
+        document.getElementById('ex-f').innerText=`Incorrect : ${c}`; document.getElementById('ex-f').style.color="var(--accent1)"; 
+    }
+}
+function nextEx() { exPIdx++; if(exPIdx >= pron.length) { exPIdx=0; exIdx = Math.floor(Math.random() * verbs.length); } updateEx(); }
 
 document.addEventListener('keydown', (e) => {
-    if (e.target.tagName === 'INPUT') {
-        if (e.key === 'Enter') check();
-        return; 
-    }
-    if (e.key === 'ArrowRight') next();
-    if (e.key === 'ArrowLeft') prev();
-    if (e.key === ' ') { 
-        e.preventDefault(); 
-        if(md==='flash') document.querySelector('.card').classList.toggle('flip');
+    if (e.target.tagName === 'INPUT' && e.key === 'Enter') checkEx();
+    if (document.getElementById('view-flash').classList.contains('active')) {
+        if (e.key === 'ArrowRight') nextFC();
+        if (e.key === 'ArrowLeft') prevFC();
+        if (e.key === ' ') { e.preventDefault(); document.querySelector('.card').classList.toggle('flip'); }
     }
 });
 
-up();
+buildList();
 </script>
 </body>
 </html>
