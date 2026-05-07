@@ -109,7 +109,7 @@
             <div class="card">
                 <div class="front">
                     <p class="v-main" id="fc-v">Verbo</p>
-                    <span class="audio-icon" onclick="playAudio(document.getElementById('fc-v').innerText, event)">🔊</span>
+                    <span class="audio-icon" onclick="playAudio(document.getElementById('fc-v').innerText, event)">⏵</span>
                     <p style="color:#999; font-size:13px; margin-top:30px;">Tocar para traduzir</p>
                 </div>
                 <div class="back">
@@ -245,7 +245,7 @@ function buildList() {
         <div class="list-row" id="row-${i}">
             <div class="row-header" onclick="toggleRow(${i})">
                 <span class="row-num">${i+1}.</span>
-                <div class="row-verb">${v.i} <span class="audio-icon" onclick="playAudio('${v.i}', event)">⏯</span></div>
+                <div class="row-verb">${v.i} <span class="audio-icon" onclick="playAudio('${v.i}', event)">⏵</span></div>
                 <div class="tap-reveal" data-trans="${transLine}" onclick="revealMask(this, event)">tocar para traduzir</div>
                 <span class="chevron">▼</span>
             </div>
